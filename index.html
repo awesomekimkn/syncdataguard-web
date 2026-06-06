@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SyncData Guard — 대용량 파일 이관 플랫폼</title>
+<meta name="description" content="어떤 서버도, 어떤 NAS도, 어떤 규모도. 파일 기반 대용량 데이터 이관의 새로운 기준.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060C18;--surface:#0C1525;--card:#111E30;
+  --mint:#00E5A0;--teal:#0EA5C9;--accent:#1D6FE8;
+  --white:#F0F6FF;--muted:#6B7FA3;--dim:#3A4A6B;
+  --border:rgba(255,255,255,0.06);
+  --font-body:'Noto Sans KR',sans-serif;
+  --font-display:'Syne',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--white);overflow-x:hidden;word-break:keep-all;line-height:1.6}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:16px 48px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(6,12,24,0.9);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-family:var(--font-display);font-size:18px;font-weight:800;letter-spacing:-.5px}
+.logo em{font-style:normal;color:var(--mint)}
+.nav-links{display:flex;gap:32px}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.lang-sw{display:flex;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.lang-sw button{padding:5px 11px;font-size:12px;font-weight:600;background:none;border:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.lang-sw button.on{background:var(--mint);color:var(--bg)}
+.cta-btn{padding:9px 20px;background:var(--mint);color:var(--bg);border-radius:8px;font-size:13px;font-weight:500;text-decoration:none;transition:opacity .2s}
+.cta-btn:hover{opacity:.85}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:120px 48px 80px;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 45% at 75% 35%,rgba(0,229,160,.06),transparent 65%),
+    radial-gradient(ellipse 35% 35% at 15% 75%,rgba(29,111,232,.06),transparent 60%);
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+  background-size:72px 72px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent);
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black,transparent);
+}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;position:relative;z-index:1}
+.tag{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border:1px solid rgba(0,229,160,.25);border-radius:20px;
+  font-size:11px;font-weight:500;color:var(--mint);letter-spacing:.06em;text-transform:uppercase;
+  margin-bottom:20px;
+}
+.tag::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--mint);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-family:var(--font-display);font-size:56px;font-weight:800;line-height:1.08;letter-spacing:-2px;margin-bottom:20px}
+h1 em{font-style:normal;color:var(--mint)}
+.hero-sub{font-size:16px;color:var(--muted);line-height:1.8;margin-bottom:32px;font-weight:300}
+.hero-sub strong{color:var(--white);font-weight:500}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-p{padding:13px 26px;background:var(--mint);color:var(--bg);border-radius:9px;font-size:14px;font-weight:500;text-decoration:none;transition:all .2s}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,229,160,.28)}
+.btn-s{padding:13px 26px;border:1px solid var(--border);color:var(--white);border-radius:9px;font-size:14px;text-decoration:none;transition:all .2s}
+.btn-s:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.04)}
+.hero-stats{display:flex;gap:36px;margin-top:44px;padding-top:36px;border-top:1px solid var(--border)}
+.stat .n{font-family:var(--font-display);font-size:30px;font-weight:800;color:var(--mint)}
+.stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* terminal */
+.term{background:#080F1E;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.6)}
+.term-top{display:flex;align-items:center;gap:7px;padding:12px 16px;background:#0D1628;border-bottom:1px solid var(--border)}
+.d{width:10px;height:10px;border-radius:50%}
+.d.r{background:#FF5F57}.d.y{background:#FFBD2E}.d.g{background:#28CA41}
+.term-ttl{font-size:11px;color:var(--muted);margin:0 auto;font-family:monospace}
+.term-body{padding:20px;font-family:monospace;font-size:12px;line-height:1.9}
+.c1{color:#7DD3FC}.c2{color:var(--mint)}.c3{color:#FCD34D}.c4{color:#4B5563}.c5{color:#F9A8D4}
+.bar-row{display:flex;align-items:center;gap:10px;margin:3px 0}
+.bar-bg{flex:1;height:3px;background:#1A2535;border-radius:2px;overflow:hidden}
+.bar-fg{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--mint),var(--teal))}
+.cursor{animation:cur 1s step-end infinite}
+@keyframes cur{50%{opacity:0}}
+
+/* ── SECTIONS ── */
+section{padding:96px 48px}
+.wrap{max-width:1100px;margin:0 auto}
+.sec-tag{font-size:11px;font-weight:500;color:var(--mint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+h2{font-family:var(--font-display);font-size:40px;font-weight:800;line-height:1.15;letter-spacing:-1.5px;margin-bottom:14px}
+.sec-desc{font-size:15px;color:var(--muted);line-height:1.8;max-width:520px;font-weight:300}
+
+/* ── WHY: 경쟁 비교 ── */
+.why{background:var(--surface)}
+.cmp-table{width:100%;border-collapse:collapse;margin-top:52px;font-size:13px}
+.cmp-table th{padding:14px 20px;font-weight:600;text-align:center;border-bottom:2px solid var(--border)}
+.cmp-table th:first-child{text-align:left;color:var(--muted);font-weight:400}
+.cmp-table th.hl{color:var(--mint);border-bottom-color:var(--mint)}
+.cmp-table td{padding:13px 20px;border-bottom:1px solid var(--border);text-align:center;color:var(--muted)}
+.cmp-table td:first-child{text-align:left;color:var(--white);font-weight:500}
+.cmp-table tr:last-child td{border-bottom:none}
+.cmp-table tr:nth-child(even) td{background:rgba(255,255,255,.015)}
+.cmp-table td.hl{background:rgba(0,229,160,.04)}
+.ok{color:var(--mint);font-weight:700}
+.no{color:var(--dim)}
+.pa{color:#FCD34D;font-size:12px}
+
+/* ── FEATURES ── */
+.features{background:var(--bg)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:52px}
+.fc{background:var(--bg);padding:32px 28px;transition:background .25s}
+.fc:hover{background:var(--surface)}
+.fi{width:40px;height:40px;border-radius:9px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.15);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:18px}
+.fc h3{font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-.2px}
+.fc p{font-size:13px;color:var(--muted);line-height:1.75}
+.ftag{display:inline-block;margin-top:12px;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:500;background:rgba(0,229,160,.08);color:var(--mint)}
+
+/* ── ARCHITECTURE ── */
+.arch{background:var(--surface)}
+.arch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px}
+.ac{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 22px;transition:border-color .2s}
+.ac.featured{border-color:var(--mint)}
+.ac-mode{font-size:11px;font-weight:600;color:var(--mint);letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ac-mode .rec{background:var(--mint);color:var(--bg);padding:2px 8px;border-radius:5px;font-size:10px}
+.ac h3{font-size:17px;font-weight:700;margin-bottom:6px}
+.ac .sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+.ac p{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.diagram{background:#060C18;border-radius:8px;padding:14px;font-family:monospace;font-size:11px}
+.dbox{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.db{background:var(--surface);border:1px solid var(--dim);border-radius:6px;padding:7px 10px;text-align:center;flex:1}
+.db.mint{border-color:rgba(0,229,160,.4);background:rgba(0,229,160,.05)}
+.db .dn{font-size:11px;color:var(--white)}
+.db .ds{font-size:9px;color:var(--muted);margin-top:2px}
+.darrow{color:var(--mint);font-size:14px;flex-shrink:0}
+.dc{text-align:center;border-top:1px solid var(--border);padding-top:10px;margin-top:0}
+.dc span{display:inline-block;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:5px;padding:3px 10px;color:var(--mint);font-size:10px}
+.ac-note{font-size:11px;color:var(--muted);margin-top:12px}
+.ac-note span{color:var(--mint)}
+
+/* NAS 벤더 */
+.nas-compat{margin-top:48px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 32px}
+.nas-title{font-size:12px;color:var(--muted);margin-bottom:20px;text-align:center}
+.nas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.nas-item{background:var(--surface);border:1px solid rgba(0,229,160,.15);border-radius:8px;padding:12px 14px}
+.nas-item .nn{font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px}
+.nas-item .nm{font-size:11px;color:var(--mint)}
+.nas-item .nd{font-size:10px;color:var(--muted);margin-top:2px}
+.nas-dim{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.nas-dim .nn{color:var(--muted)}
+.nas-dim .nm{color:var(--muted)}
+.nas-foot{text-align:center;margin-top:14px;font-size:11px;color:var(--muted)}
+
+/* OS 뱃지 */
+.os-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px;justify-content:center}
+.os-badge{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--muted)}
+.os-badge strong{color:var(--white);font-weight:500;margin-right:4px}
+
+/* ── PREDICTION BANNER ── */
+.pred{background:var(--bg)}
+.pred-card{
+  background:linear-gradient(135deg,rgba(0,229,160,.04),rgba(14,165,201,.04));
+  border:1px solid rgba(0,229,160,.15);border-radius:14px;
+  padding:40px;display:grid;grid-template-columns:1fr 220px;gap:40px;align-items:center;
+}
+.pred-tag{font-size:11px;font-weight:500;color:var(--mint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.pred h3{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.2;letter-spacing:-1px;margin-bottom:14px}
+.pred p{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:20px}
+.pred-pts{display:flex;flex-direction:column;gap:8px}
+.pred-pt{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.pred-pt::before{content:'✓';color:var(--mint);font-weight:700;flex-shrink:0}
+.pred-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px}
+.pred-box .pb-title{font-size:10px;color:var(--muted);text-align:center;margin-bottom:14px;letter-spacing:.05em}
+.pred-row{display:flex;justify-content:space-between;margin-bottom:9px;font-size:12px;font-family:monospace}
+.pred-row .k{color:var(--muted)}
+.pred-row .v{color:var(--white)}
+.pred-sep{height:1px;background:var(--border);margin:12px 0}
+.pred-result{display:flex;justify-content:space-between;align-items:center}
+.pred-result .k{font-size:12px;color:var(--muted);font-family:monospace}
+.pred-result .v{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--mint)}
+.pred-conf{text-align:center;font-size:10px;color:var(--muted);margin-top:10px}
+
+/* ── PRICING ── */
+.pricing{background:var(--surface)}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px}
+.pc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:30px 26px;position:relative;transition:transform .2s}
+.pc:hover{transform:translateY(-3px)}
+.pc.hl{border-color:var(--mint);background:linear-gradient(160deg,rgba(0,229,160,.04),var(--card))}
+.pc-pop{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--mint);color:var(--bg);font-size:10px;font-weight:700;padding:3px 12px;border-radius:10px;white-space:nowrap}
+.pc-name{font-family:var(--font-display);font-size:20px;font-weight:800;margin-bottom:6px}
+.pc-desc{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.pc-orig{font-size:11px;color:var(--dim);text-decoration:line-through;margin-bottom:2px}
+.pc-price{font-family:var(--font-display);font-size:30px;font-weight:800;margin-bottom:3px}
+.pc-price span{font-size:13px;font-weight:400;color:var(--muted)}
+.pc-disc{display:inline-block;background:rgba(0,229,160,.12);color:var(--mint);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-bottom:7px}
+.pc-maint{font-size:11px;color:var(--muted);margin-bottom:20px}
+.pc-div{height:1px;background:var(--border);margin-bottom:18px}
+.pf{display:flex;align-items:flex-start;gap:8px;font-size:12px;margin-bottom:9px;line-height:1.5}
+.pf .y{color:var(--mint);flex-shrink:0;margin-top:1px}
+.pf .n{color:var(--dim);flex-shrink:0;margin-top:1px}
+.pf .t{color:var(--muted)}
+.pf .t.y{color:var(--white)}
+.pbtn{display:block;width:100%;padding:12px;border-radius:9px;text-align:center;font-size:13px;font-weight:500;text-decoration:none;margin-top:18px;transition:all .2s;border:none;cursor:pointer}
+.pbtn.pm{background:var(--mint);color:var(--bg)}
+.pbtn.pm:hover{box-shadow:0 6px 20px rgba(0,229,160,.28)}
+.pbtn.pg{border:1px solid var(--border);color:var(--white);background:transparent}
+.pbtn.pg:hover{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.04)}
+.price-note{text-align:center;margin-top:24px;font-size:12px;color:var(--muted)}
+
+/* ── FOOTER ── */
+footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px}
+.foot-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.foot-logo{font-family:var(--font-display);font-size:16px;font-weight:800}
+.foot-logo em{font-style:normal;color:var(--mint)}
+.foot-links{display:flex;gap:20px}
+.foot-links a{font-size:12px;color:var(--muted);text-decoration:none}
+.foot-links a:hover{color:var(--white)}
+.foot-copy{font-size:11px;color:var(--dim);margin-top:20px;text-align:center;max-width:1100px;margin:20px auto 0}
+
+@media(max-width:860px){
+  nav{padding:14px 20px}.nav-links{display:none}
+  .hero-inner{grid-template-columns:1fr;gap:36px}
+  h1{font-size:38px}
+  .feat-grid,.arch-grid,.price-grid{grid-template-columns:1fr}
+  .pred-card{grid-template-columns:1fr}
+  section{padding:64px 24px}
+  .foot-inner{flex-direction:column;gap:20px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">SyncData<em>Guard</em></div>
+  <div class="nav-links">
+    <a href="#why" data-i18n="nav_why">왜 SyncDataGuard?</a>
+    <a href="#features" data-i18n="nav_feat">기능</a>
+    <a href="#arch" data-i18n="nav_arch">아키텍처</a>
+    <a href="#report" data-i18n="nav_report">리포트</a><a href="#pricing" data-i18n="nav_price">가격</a>
+    <a href="mailto:support@syncdataguard.com" data-i18n="nav_contact">문의</a>
+  </div>
+  <div class="nav-right">
+    <div class="lang-sw">
+      <button class="on" onclick="setLang('ko')">한</button>
+      <button onclick="setLang('en')">EN</button>
+      <button onclick="setLang('ja')">日</button>
+    </div>
+    <a href="#pricing" class="cta-btn" data-i18n="nav_cta">무료 체험</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="tag" data-i18n="hero_tag">파일 기반 대용량 데이터 이관</div>
+      <h1 data-i18n="hero_h1">어떤 서버도.<br>어떤 규모도.<br><em>가능합니다.</em></h1>
+      <p class="hero-sub" data-i18n="hero_sub">기존 솔루션이 포기하는 환경에서도 SyncData Guard는 동작합니다.<br><strong>rsync 지원 서버는 직접 연결</strong>, 그 외 모든 환경은 <strong>NFS/SMB 마운트</strong>로 해결합니다.</p>
+      <div class="hero-btns">
+        <a href="#pricing" class="btn-p" data-i18n="hero_cta1">무료 체험 시작 →</a>
+        <a href="#why" class="btn-s" data-i18n="hero_cta2">왜 SyncDataGuard?</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="n">16×</div><div class="l" data-i18n="s1">병렬 스트림</div></div>
+        <div class="stat"><div class="n">100%</div><div class="l" data-i18n="s2">데이터 정합성</div></div>
+        <div class="stat"><div class="n">0</div><div class="l" data-i18n="s3">벤더 제약</div></div>
+      </div>
+    </div>
+    <div class="term">
+      <div class="term-top">
+        <div class="d r"></div><div class="d y"></div><div class="d g"></div>
+        <div class="term-ttl" data-i18n="term_ttl">SyncData Guard — 실시간 모니터</div>
+      </div>
+      <div class="term-body">
+        <div><span class="c4">❯</span> <span class="c1">sdg migrate</span> <span class="c5">--parallel 16 --bwlimit 5g --depth 4</span></div>
+        <br>
+        <div><span class="c2">✓</span> <span data-i18n="t1">연결 확인</span> <span class="c4">nas-src.corp → nas-dst.corp</span></div>
+        <div><span class="c2">✓</span> <span data-i18n="t2">스캔 완료</span> <span class="c4" data-i18n="t2v">8,432,110 파일 · 312 TB</span></div>
+        <div><span class="c3">⟳</span> <span data-i18n="t3">이관 진행 중... (청크 분할 · 16 병렬)</span></div>
+        <br>
+        <div class="bar-row"><span class="c4" style="width:54px" data-i18n="ta">전체</span><div class="bar-bg"><div class="bar-fg" style="width:68%"></div></div><span class="c2">68%</span></div>
+        <div class="bar-row"><span class="c4" style="width:54px">/archive</span><div class="bar-bg"><div class="bar-fg" style="width:100%"></div></div><span class="c2" data-i18n="done">완료</span></div>
+        <div class="bar-row"><span class="c4" style="width:54px">/logs</span><div class="bar-bg"><div class="bar-fg" style="width:81%"></div></div><span class="c1">81%</span></div>
+        <div class="bar-row"><span class="c4" style="width:54px">/media</span><div class="bar-bg"><div class="bar-fg" style="width:30%"></div></div><span class="c4">30%</span></div>
+        <br>
+        <div><span class="c4" data-i18n="spd">속도</span> <span class="c2">4.8 GB/s</span> &nbsp;<span class="c4" data-i18n="eta">완료까지</span> <span class="c2" data-i18n="etav">약 4시간 18분</span></div>
+        <br>
+        <div><span class="c4">$</span> <span class="cursor">_</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="why" id="why">
+  <div class="wrap">
+    <div class="sec-tag" data-i18n="why_tag">왜 SyncData Guard?</div>
+    <h2 data-i18n="why_h2">기존 방법의 한계를<br>넘습니다.</h2>
+    <p class="sec-desc" data-i18n="why_desc">단순 rsync 스크립트는 대용량에서 불안정하고, 벤더 전용 툴은 같은 제조사끼리만 됩니다. SyncData Guard는 두 한계를 모두 극복합니다.</p>
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th data-i18n="cmp_feature">기능</th>
+          <th data-i18n="cmp_rsync">단순 rsync</th>
+          <th data-i18n="cmp_vendor">벤더 전용 툴</th>
+          <th class="hl">SyncData Guard</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td data-i18n="c1">GUI 모니터링</td><td class="no">✕</td><td class="pa" data-i18n="cv1">△ 제한적</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c2">벤더 간 이관</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c3">페타급 안정성</td><td class="no">✕</td><td class="pa" data-i18n="cv3">△ 자사만</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c4">청크 병렬 이관</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c5">예약 자동화</td><td class="no">✕</td><td class="pa" data-i18n="cv5">△ 별도 구축</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c6">정합성 리포트</td><td class="no">✕</td><td class="pa" data-i18n="cv6">△ 제한적</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c7">오프라인 설치</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c8">도입 비용</td><td class="pa" data-i18n="c8a">낮음 (인건비↑)</td><td class="no" data-i18n="c8b">억대 이상</td><td class="ok hl" data-i18n="c8c">합리적</td></tr>
+        <tr><td data-i18n="c9">웹 UI (브라우저만으로)</td><td class="no">✕</td><td class="pa" data-i18n="cv9">△ 별도 클라이언트</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c10">스토리지 분석→스캔→이관→검증→리포트<br>단번에 해결</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+<!-- PIPELINE BANNER -->
+<section style="background:var(--bg);padding:0 48px 80px">
+  <div class="wrap">
+    <div style="background:linear-gradient(135deg,var(--surface),var(--card));border:1px solid var(--border);border-radius:14px;padding:40px 48px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+      <div>
+        <div style="font-size:11px;font-weight:500;color:var(--mint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px" data-i18n="pipe_tag">원 파이프라인</div>
+        <h3 style="font-family:var(--font-display);font-size:28px;font-weight:800;line-height:1.2;letter-spacing:-1px;margin-bottom:14px" data-i18n="pipe_h3">브라우저만 열면<br>이관 완료까지 끝납니다.</h3>
+        <p style="font-size:14px;color:var(--muted);line-height:1.85;margin-bottom:20px" data-i18n="pipe_p">rsync 명령어를 몰라도 됩니다. 서버 등록부터 스캔, 이관 실행, 정합성 검증, 리포트 출력까지 하나의 웹 UI에서 클릭 몇 번으로 완료됩니다. 중간에 다른 툴이 필요 없습니다.</p>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)"><span style="color:var(--mint);font-weight:700">✓</span> <span data-i18n="pp_1">rsync 명령어 지식 불필요</span></div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)"><span style="color:var(--mint);font-weight:700">✓</span> <span data-i18n="pp_2">설치 후 브라우저로 즉시 접속</span></div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)"><span style="color:var(--mint);font-weight:700">✓</span> <span data-i18n="pp_3">이관 완료 = 리포트 완성 = 서비스 전환 판단</span></div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)"><span style="color:var(--mint);font-weight:700">✓</span> <span data-i18n="pp_4">추가 툴·스크립트 불필요</span></div>
+        </div>
+      </div>
+      <!-- 파이프라인 시각화 -->
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px">
+          <span style="font-size:20px">🔌</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white)" data-i18n="step_1">1. 서버 등록</div><div style="font-size:11px;color:var(--muted)" data-i18n="step_1d">소스·타겟 서버 연결 확인</div></div>
+          <span style="margin-left:auto;color:var(--mint);font-size:12px" data-i18n="click_1">클릭</span>
+        </div>
+        <div style="text-align:center;color:var(--dim);font-size:11px">↓</div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px">
+          <span style="font-size:20px">🔍</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white)" data-i18n="step_2">2. 스캔 & 설정</div><div style="font-size:11px;color:var(--muted)" data-i18n="step_2d">파일 수·용량 파악, 병렬·청크 설정</div></div>
+          <span style="margin-left:auto;color:var(--mint);font-size:12px" data-i18n="click_2">클릭</span>
+        </div>
+        <div style="text-align:center;color:var(--dim);font-size:11px">↓</div>
+        <div style="background:var(--bg);border:1px solid rgba(0,229,160,.3);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px">
+          <span style="font-size:20px">⚡</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--mint)" data-i18n="step_3">3. 이관 실행</div><div style="font-size:11px;color:var(--muted)" data-i18n="step_3d">실시간 모니터링 · 대역폭 제어</div></div>
+          <span style="margin-left:auto;color:var(--mint);font-size:12px" data-i18n="click_3">클릭</span>
+        </div>
+        <div style="text-align:center;color:var(--dim);font-size:11px">↓</div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px">
+          <span style="font-size:20px">📑</span>
+          <div><div style="font-size:13px;font-weight:600;color:var(--white)" data-i18n="step_4">4. 검증 & 리포트</div><div style="font-size:11px;color:var(--muted)" data-i18n="step_4d">정합성 확인 → HTML 리포트 다운로드</div></div>
+          <span style="margin-left:auto;background:var(--mint);color:var(--bg);font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px" data-i18n="done_badge">완료</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="sec-tag" data-i18n="feat_tag">핵심 기능</div>
+    <h2 data-i18n="feat_h2">이관을 완전히<br>통제합니다.</h2>
+    <p class="sec-desc" data-i18n="feat_desc">시작부터 검증까지, 모든 단계를 하나의 솔루션으로 처리합니다.</p>
+    <div class="feat-grid">
+      <div class="fc"><div class="fi">⚡</div><h3 data-i18n="f1t">청크 병렬 이관</h3><p data-i18n="f1d">대용량 폴더를 N개 청크로 분할해 최대 16개 스트림으로 동시 전송합니다. 이관 시간을 획기적으로 단축합니다.</p><span class="ftag" data-i18n="f1g">Enterprise: 최대 16 스트림</span></div>
+      <div class="fc"><div class="fi">📊</div><h3 data-i18n="f2t">실시간 모니터링</h3><p data-i18n="f2d">WebSocket 기반 대시보드로 폴더별 진행률, 속도, 완료 예상 시간, 에러를 실시간으로 확인합니다.</p><span class="ftag" data-i18n="f2g">모든 플랜</span></div>
+      <div class="fc"><div class="fi">🎛</div><h3 data-i18n="f3t">대역폭 제어</h3><p data-i18n="f3d">정밀한 대역폭 제한으로 이관 중에도 운영 서비스 영향을 최소화합니다. 야간 자동화와 결합하면 완전 무인 이관이 가능합니다.</p><span class="ftag" data-i18n="f3g">서비스 무중단</span></div>
+      <div class="fc"><div class="fi">📑</div><h3 data-i18n="f4t">정합성 리포트 & 빠른 서비스 전환</h3><p data-i18n="f4d">이관 완료 즉시 파일 수·체크섬 검증 결과를 HTML 리포트로 출력합니다. 검증 결과를 근거로 서비스 전환 시점을 즉시 결정해 전환 시간을 최소화합니다.</p><span class="ftag" data-i18n="f4g">즉시 전환 결정</span></div>
+      <div class="fc"><div class="fi">⏸</div><h3 data-i18n="f6t">중단 & 재개 / 에러 추적</h3><p data-i18n="f6d">언제든 중단하고 이어받을 수 있습니다. 완료된 폴더는 자동 스킵하며, 에러 로그를 파일 단위로 기록해 다운로드할 수 있습니다.</p><span class="ftag" data-i18n="f6g">완전한 제어</span></div>
+      <div class="fc"><div class="fi">🔍</div><h3 data-i18n="f7t">스토리지 분석 (CPU 최소 부하)</h3><p data-i18n="f7d">서비스 운영 중에도 CPU 최저 우선순위로 백그라운드 분석합니다. 이관 전후 파일 수·용량 비교, 스냅샷 증감 추적으로 이상 징후를 즉시 감지합니다.</p><span class="ftag" data-i18n="f7g">Enterprise · 무중단 분석</span></div>
+      <div class="fc"><div class="fi">📅</div><h3 data-i18n="f8t">예약 이관 & 정기 백업</h3><p data-i18n="f8d">일간·주간·월간·Cron 스케줄로 정기 이관과 백업을 자동화합니다. 소중한 데이터를 데일리 백업, 주말 백업으로 안전하게 지킵니다.</p><span class="ftag" data-i18n="f8g">Pro · Enterprise</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="arch" id="arch">
+  <div class="wrap">
+    <div class="sec-tag" data-i18n="arch_tag">이관 아키텍처</div>
+    <h2 data-i18n="arch_h2">어떤 환경 조합도<br>지원합니다.</h2>
+    <p class="sec-desc" data-i18n="arch_desc">rsync를 지원하는 서버·NAS는 직접 연결하고, 지원하지 않으면 NFS/SMB 마운트로 해결합니다. SSH 에이전트 별도 설치 불필요.</p>
+
+    <div class="arch-grid">
+      <!-- MODE 1 -->
+      <div class="ac featured">
+        <div class="ac-mode"><span class="rec" data-i18n="rec">추천</span> MODE 1</div>
+        <h3 data-i18n="m1t">원격 → 원격</h3>
+        <div class="sub" data-i18n="m1s">rsync 지원 서버·NAS 간</div>
+        <p data-i18n="m1d">SyncData Guard가 제어만 담당하고 소스에서 직접 타겟으로 전송합니다. 네트워크 효율 최대, 페타급 환경에 최적입니다.</p>
+        <div class="diagram">
+          <div class="dbox">
+            <div class="db mint"><div class="dn" data-i18n="src">소스 서버·NAS</div><div class="ds">Isilon / Synology</div></div>
+            <div class="darrow">→</div>
+            <div class="db mint"><div class="dn" data-i18n="tgt">타겟 서버·NAS</div><div class="ds">NetApp / QNAP</div></div>
+          </div>
+          <div class="dc"><span data-i18n="ctrl">🖥 SyncData Guard (제어)</span></div>
+        </div>
+        <div class="ac-note"><span>✓</span> <span data-i18n="m1n">가장 빠름 · 대역폭 100% · 페타급 최적</span></div>
+      </div>
+      <!-- MODE 2 -->
+      <div class="ac">
+        <div class="ac-mode">MODE 2</div>
+        <h3 data-i18n="m2t">서버(NAS) → 서버(NAS)</h3>
+        <div class="sub" data-i18n="m2s">NFS/SMB 마운트 방식</div>
+        <p data-i18n="m2d">rsync가 없는 NAS(HNAS, NetApp 등)를 SyncData Guard 서버에 마운트해 이관합니다. 벤더 무관, 에이전트 불필요.</p>
+        <div class="diagram">
+          <div class="dbox">
+            <div class="db"><div class="dn" data-i18n="m2src">로컬(NAS)</div><div class="ds" data-i18n="m2ss">NFS 마운트 ↓</div></div>
+            <div class="darrow">+</div>
+            <div class="db"><div class="dn" data-i18n="m2tgt">로컬(NAS)</div><div class="ds" data-i18n="m2ts">NFS 마운트 ↓</div></div>
+          </div>
+          <div class="dc"><span data-i18n="m2ctrl">🖥 SyncData Guard (중계·이관)</span></div>
+        </div>
+        <div class="ac-note"><span>✓</span> <span data-i18n="m2n">벤더 무관 · rsync 불필요 · HNAS·NetApp</span></div>
+      </div>
+      <!-- MODE 3 -->
+      <div class="ac">
+        <div class="ac-mode">MODE 3</div>
+        <h3 data-i18n="m3t">로컬 ↔ 원격</h3>
+        <div class="sub" data-i18n="m3s">혼합·단일 서버 환경</div>
+        <p data-i18n="m3d">동일 서버 내 파티션 간, 또는 SyncData Guard 서버가 소스·타겟 한쪽을 담당합니다. 파일 서버→NAS, NAS→클라우드 스토리지 등 다양한 시나리오.</p>
+        <div class="diagram">
+          <div class="dbox">
+            <div class="db mint"><div class="dn" data-i18n="m3sg">SyncData Guard 서버</div><div class="ds" data-i18n="m3ss">소스 겸 제어</div></div>
+            <div class="darrow">⇄</div>
+            <div class="db"><div class="dn" data-i18n="m3tg">원격 서버·NAS</div><div class="ds" data-i18n="m3ts">모든 벤더</div></div>
+          </div>
+          <div class="dc"><span data-i18n="m3c">SSH over rsync · NFS/SMB</span></div>
+        </div>
+        <div class="ac-note"><span>✓</span> <span data-i18n="m3n">유연한 구성 · NAS 마운트 지원</span></div>
+      </div>
+    </div>
+
+    <!-- NAS 호환 -->
+    <div class="nas-compat">
+      <div class="nas-title" data-i18n="nas_title">✅ 검증된 NAS / 서버 호환 목록</div>
+      <div class="nas-grid">
+        <div class="nas-item"><div class="nn">Dell EMC Isilon</div><div class="nm" data-i18n="na1">SSH+rsync 직접</div><div class="nd">OneFS · PowerScale</div></div>
+        <div class="nas-item"><div class="nn">Synology</div><div class="nm" data-i18n="na2">SSH+rsync 직접</div><div class="nd">DSM · 전 모델</div></div>
+        <div class="nas-item"><div class="nn">QNAP</div><div class="nm" data-i18n="na3">SSH+rsync 직접</div><div class="nd">QTS · QuTS hero</div></div>
+        <div class="nas-item"><div class="nn">NetApp ONTAP</div><div class="nm" data-i18n="na4">NFS 마운트</div><div class="nd">FAS · AFF · ONTAP</div></div>
+        <div class="nas-item"><div class="nn">Hitachi HNAS</div><div class="nm" data-i18n="na5">NFS/SMB 마운트</div><div class="nd">EVS 구조 지원</div></div>
+        <div class="nas-dim"><div class="nn">IBM Spectrum Scale</div><div class="nm" data-i18n="na6">마운트 이관</div><div class="nd">GPFS</div></div>
+      </div>
+      <div class="nas-foot" data-i18n="nas_foot">rsync를 지원하는 모든 Linux 서버·NAS와 직접 연결 가능 · NFS/SMB 마운트로 나머지 모두 지원</div>
+    </div>
+
+    <!-- OS -->
+    <div style="margin-top:32px;text-align:center">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px" data-i18n="os_title">SyncData Guard 설치 가능 서버 OS (NAS 자체 OS 무관)</div>
+      <div class="os-row">
+        <div class="os-badge"><strong>CentOS</strong>7 · 8 · 9</div>
+        <div class="os-badge"><strong>Rocky Linux</strong>8 · 9</div>
+        <div class="os-badge"><strong>AlmaLinux</strong>8 · 9</div>
+        <div class="os-badge"><strong>RHEL</strong>7 · 8 · 9</div>
+        <div class="os-badge"><strong>Ubuntu</strong>18.04 ~ 24.04</div>
+        <div class="os-badge"><strong>Debian</strong>10 · 11 · 12</div>
+      </div>
+      <div style="margin-top:12px;font-size:11px;color:var(--dim)" data-i18n="os_note">패키지 매니저 자동 감지 (apt/dnf/yum) · 완전 오프라인 설치 지원 · 신규 OS 버전 자동 지원</div>
+    </div>
+  </div>
+</section>
+
+<!-- PREDICTION -->
+<section class="pred">
+  <div class="wrap">
+    <div class="pred-card">
+      <div>
+        <div class="pred-tag" data-i18n="pred_tag">이관 이력 & 예측</div>
+        <h3 data-i18n="pred_h3">"다음 이관, 얼마나 걸릴까요?"<br>이제 데이터로 답합니다.</h3>
+        <p data-i18n="pred_p">모든 이관 작업의 속도·시간·파일 수를 이력으로 축적합니다. 다음 이관의 완료 시간을 자동 예측해 야간 배치 계획과 서비스 전환 일정을 사전에 수립할 수 있습니다.</p>
+        <div class="pred-pts">
+          <div class="pred-pt" data-i18n="pp1">작업별 속도 · 시간 · 파일 수 자동 기록</div>
+          <div class="pred-pt" data-i18n="pp2">다음 이관 완료 예상 시간 자동 계산</div>
+          <div class="pred-pt" data-i18n="pp3">정합성 리포트로 즉각적인 서비스 전환 결정</div>
+          <div class="pred-pt" data-i18n="pp4">경영진 보고 · 서비스 점검 일정 수립 근거 제공</div>
+        </div>
+      </div>
+      <div class="pred-box">
+        <div class="pb-title" data-i18n="pred_box_title">📊 이관 예측</div>
+        <div class="pred-row"><span class="k" data-i18n="pb1k">이관 데이터</span><span class="v">312 TB</span></div>
+        <div class="pred-row"><span class="k" data-i18n="pb2k">평균 속도</span><span class="v">4.8 GB/s</span></div>
+        <div class="pred-row"><span class="k" data-i18n="pb3k">이력 기준</span><span class="v" data-i18n="pb3v">3회</span></div>
+        <div class="pred-sep"></div>
+        <div class="pred-result"><span class="k" data-i18n="pb4k">최종 이관 예상</span><span class="v" data-i18n="pb4v">약 1시간</span></div>
+        <div style="text-align:center;font-size:10px;color:var(--teal);margin-top:4px" data-i18n="pb4v2">delta 동기화 기준</div>
+        <div class="pred-conf" data-i18n="pred_conf">신뢰도 94%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- REPORT PREVIEW -->
+<section style="background:var(--surface);padding:96px 48px" id="report">
+  <div class="wrap">
+    <div class="sec-tag" data-i18n="rpt_tag">실제 이관 리포트</div>
+    <h2 data-i18n="rpt_h2">이관 완료 즉시<br>리포트가 생성됩니다.</h2>
+    <p class="sec-desc" data-i18n="rpt_desc">서비스 전환 결정에 필요한 모든 정보가 담긴 HTML 리포트를 자동 생성합니다. 다운로드해서 보고서로 바로 활용하세요.</p>
+
+    <!-- 실제 리포트 미리보기 -->
+    <div style="margin-top:48px;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <!-- 리포트 상단 바 -->
+      <div style="background:#0d1117;padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #21262d">
+        <div style="width:10px;height:10px;border-radius:50%;background:#FF5F57"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#FFBD2E"></div>
+        <div style="width:10px;height:10px;border-radius:50%;background:#28CA41"></div>
+        <div style="font-size:11px;color:#8b949e;margin:0 auto;font-family:monospace">migration-report_2026-06-04.html</div>
+      </div>
+
+      <!-- 리포트 내용 -->
+      <div style="background:#0d1117;padding:28px 32px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;color:#e6edf3">
+
+        <h1 style="color:#00d4aa;font-size:20px;margin:0 0 4px">✅ Migration Complete</h1>
+        <div style="color:#8b949e;font-size:12px;margin-bottom:20px;font-family:monospace">nas-src.corp:/data → nas-dst.corp:/data</div>
+
+        <!-- 기본 정보 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:12px">
+          <div style="display:flex;gap:8px;grid-column:span 2"><span style="color:#8b949e;min-width:90px">Job name</span><span style="font-family:monospace;font-weight:600">migration-job_2026-06-04_final</span></div>
+          <div style="display:flex;gap:8px"><span style="color:#8b949e;min-width:90px">Started</span><span style="font-family:monospace;font-weight:600">6/4/2026, 10:00:00 AM</span></div>
+          <div style="display:flex;gap:8px"><span style="color:#8b949e;min-width:90px">Finished</span><span style="font-family:monospace;font-weight:600">6/4/2026, 11:02:18 AM</span></div>
+          <div style="display:flex;gap:8px"><span style="color:#8b949e;min-width:90px">Parallel</span><span style="font-family:monospace;font-weight:600">16</span></div>
+          <div style="display:flex;gap:8px"><span style="color:#8b949e;min-width:90px">Bandwidth</span><span style="font-family:monospace;font-weight:600">5 Gbps</span></div>
+          <div style="display:flex;gap:8px"><span style="color:#8b949e;min-width:90px">Checksum</span><span style="font-family:monospace;font-weight:600">ON</span></div>
+          <div style="display:flex;gap:8px"><span style="color:#8b949e;min-width:90px">Chunk</span><span style="font-family:monospace;font-weight:600">16 splits</span></div>
+        </div>
+
+        <!-- 요약 카드 -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:20px;font-weight:700;color:#00d4aa;margin-bottom:4px">48 / 48</div>
+            <div style="font-size:11px;color:#8b949e">Done</div>
+          </div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:20px;font-weight:700;color:#00d4aa;margin-bottom:4px">0</div>
+            <div style="font-size:11px;color:#8b949e">Failed</div>
+          </div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:20px;font-weight:700;color:#00d4aa;margin-bottom:4px">312 TB</div>
+            <div style="font-size:11px;color:#8b949e">Total Size</div>
+          </div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:20px;font-weight:700;color:#00d4aa;margin-bottom:4px">1h 2m</div>
+            <div style="font-size:11px;color:#8b949e">Duration</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px">
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:16px;font-weight:700;color:#e6edf3;margin-bottom:4px"><span style="background:#e1705522;color:#e17055;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">4 Lv</span></div>
+            <div style="font-size:11px;color:#8b949e">Migration Depth</div>
+          </div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:16px;font-weight:700;color:#e6edf3;margin-bottom:4px">8,432,110 <span style="font-size:11px;color:#8b949e">/ 8,432,110</span></div>
+            <div style="font-size:11px;color:#8b949e">Files Migrated</div>
+          </div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:16px;font-weight:700;color:#e6edf3;margin-bottom:4px">4.8 GB/s</div>
+            <div style="font-size:11px;color:#8b949e">Avg Speed</div>
+          </div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;text-align:center">
+            <div style="font-size:16px;font-weight:700;color:#00d4aa;margin-bottom:4px">100%</div>
+            <div style="font-size:11px;color:#8b949e">Success Rate</div>
+          </div>
+        </div>
+
+        <!-- 폴더 테이블 (일부) -->
+        <div style="font-size:14px;font-weight:700;margin:16px 0 10px;color:#e6edf3">Folder</div>
+        <table style="width:100%;border-collapse:collapse;background:#161b22;border-radius:10px;overflow:hidden;margin-bottom:16px">
+          <thead>
+            <tr style="background:#21262d">
+              <th style="padding:8px;text-align:left;font-size:11px;color:#8b949e;border-bottom:1px solid #30363d">Folder</th>
+              <th style="padding:8px;text-align:center;font-size:11px;color:#8b949e;border-bottom:1px solid #30363d">Depth</th>
+              <th style="padding:8px;font-size:11px;color:#8b949e;border-bottom:1px solid #30363d">Status</th>
+              <th style="padding:8px;font-size:11px;color:#8b949e;border-bottom:1px solid #30363d">Size</th>
+              <th style="padding:8px;font-size:11px;color:#8b949e;border-bottom:1px solid #30363d">Files</th>
+              <th style="padding:8px;font-size:11px;color:#8b949e;border-bottom:1px solid #30363d">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">archive/2023/Q1/</td><td style="padding:7px 8px;font-size:11px;text-align:center;border-bottom:1px solid #21262d"><span style="background:#e1705522;color:#e17055;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">3 Lv</span></td><td style="padding:7px 8px;font-size:11px;color:#00d4aa;border-bottom:1px solid #21262d">Completed</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid #21262d">24.8 TB</td><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">812,440</td><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">18m 32s</td></tr>
+            <tr><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">archive/2023/Q2/</td><td style="padding:7px 8px;font-size:11px;text-align:center;border-bottom:1px solid #21262d"><span style="background:#e1705522;color:#e17055;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">3 Lv</span></td><td style="padding:7px 8px;font-size:11px;color:#00d4aa;border-bottom:1px solid #21262d">Completed</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid #21262d">31.2 TB</td><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">1,024,810</td><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">22m 14s</td></tr>
+            <tr><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">media/images/2024/</td><td style="padding:7px 8px;font-size:11px;text-align:center;border-bottom:1px solid #21262d"><span style="background:#e1705522;color:#e17055;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">3 Lv</span></td><td style="padding:7px 8px;font-size:11px;color:#00d4aa;border-bottom:1px solid #21262d">Completed</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid #21262d">58.4 TB</td><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">2,841,200</td><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">41m 08s</td></tr>
+            <tr><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">logs/app/2024/</td><td style="padding:7px 8px;font-size:11px;text-align:center;border-bottom:1px solid #21262d"><span style="background:#e1705522;color:#e17055;padding:1px 8px;border-radius:10px;font-size:10px;font-weight:700">3 Lv</span></td><td style="padding:7px 8px;font-size:11px;color:#00d4aa;border-bottom:1px solid #21262d">Completed</td><td style="padding:7px 8px;font-size:11px;border-bottom:1px solid #21262d">12.1 TB</td><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">1,923,400</td><td style="padding:7px 8px;font-size:11px;font-family:monospace;border-bottom:1px solid #21262d">8m 41s</td></tr>
+            <tr><td style="padding:7px 8px;font-size:11px;color:#8b949e;text-align:center" colspan="6">… 44개 폴더 더 보기 (총 48개)</td></tr>
+          </tbody>
+        </table>
+
+        <!-- 정합성 검증 -->
+        <div style="font-size:14px;font-weight:700;margin:16px 0 10px;color:#e6edf3">🔍 Integrity Verification Results</div>
+        <div style="padding:10px 14px;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.3);border-radius:8px;margin-bottom:12px;font-size:12px">
+          <strong style="color:#00d4aa">✅ Verification Complete — All Files Match</strong>
+          &nbsp; ⚡ Checksum Verified · 6/4/2026, 11:05:00 AM
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px">
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px;text-align:center"><div style="font-size:18px;font-weight:700;color:#00d4aa;margin-bottom:3px">48/48</div><div style="font-size:11px;color:#8b949e">OK Folders</div></div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px;text-align:center"><div style="font-size:18px;font-weight:700;color:#00d4aa;margin-bottom:3px">0</div><div style="font-size:11px;color:#8b949e">Mismatched</div></div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px;text-align:center"><div style="font-size:14px;font-weight:700;color:#00d4aa;margin-bottom:3px">8,432,110 → 8,432,110</div><div style="font-size:11px;color:#8b949e">Total Files</div></div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px;text-align:center"><div style="font-size:18px;font-weight:700;color:#00d4aa;margin-bottom:3px">0</div><div style="font-size:11px;color:#8b949e">Missing Files</div></div>
+          <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px;text-align:center"><div style="font-size:18px;font-weight:700;color:#00d4aa;margin-bottom:3px">0</div><div style="font-size:11px;color:#8b949e">Checksum Mismatch</div></div>
+        </div>
+
+        <div style="color:#8b949e;font-size:11px;text-align:center;margin-top:16px;border-top:1px solid #21262d;padding-top:12px">
+          SyncData Guard by CloudFactory &nbsp;·&nbsp; support@syncdataguard.com
+        </div>
+      </div>
+    </div>
+
+    <!-- 설명 포인트 -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px">
+      <div style="text-align:center;padding:24px 20px">
+        <div style="font-size:28px;margin-bottom:12px">📊</div>
+        <h4 style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:8px" data-i18n="rpt_p1t">이관 완료 즉시 자동 생성</h4>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7" data-i18n="rpt_p1d">별도 작업 없이 이관 완료와 동시에 HTML 리포트가 자동으로 생성됩니다.</p>
+      </div>
+      <div style="text-align:center;padding:24px 20px">
+        <div style="font-size:28px;margin-bottom:12px">✅</div>
+        <h4 style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:8px" data-i18n="rpt_p2t">서비스 전환 즉시 결정</h4>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7" data-i18n="rpt_p2d">정합성 검증 결과를 근거로 서비스 전환 여부를 즉시 결정할 수 있습니다.</p>
+      </div>
+      <div style="text-align:center;padding:24px 20px">
+        <div style="font-size:28px;margin-bottom:12px">📁</div>
+        <h4 style="font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:8px" data-i18n="rpt_p3t">단일 HTML 파일</h4>
+        <p style="font-size:13px;color:var(--muted);line-height:1.7" data-i18n="rpt_p3d">외부 의존성 없는 단일 HTML 파일로 보관·공유·보고서 제출에 바로 활용합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="sec-tag" data-i18n="price_tag">가격</div>
+    <h2 data-i18n="price_h2">한 번 구매,<br>영구 사용.</h2>
+    <p class="sec-desc" data-i18n="price_desc">1카피 영구 라이선스. 유지보수(업데이트·지원)는 선택적으로 연장하실 수 있습니다.</p>
+    <div class="price-grid">
+      <div class="pc">
+        <div class="pc-name">Basic</div>
+        <div class="pc-desc" data-i18n="pd1">소규모 팀의 간단한 이관에 적합합니다.</div>
+        <div class="pc-orig" data-i18n="po1">590,000원</div>
+        <div class="pc-price" data-i18n="pp1p">490,000원<span data-i18n="pps">/라이선스</span></div>
+        <div class="pc-disc" data-i18n="disc">17% 할인</div>
+        <div class="pc-maint" data-i18n="pm1">유지보수 연 98,000원 (선택)</div>
+        <div class="pc-div"></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_all">모든 이관 방식 (로컬↔원격)</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_mon">실시간 모니터링</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_ver">정합성 검증 & 리포트</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_p1">병렬 1 스트림</span></div>
+        <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_sch">예약 이관</span></div>
+        <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_chk">청크 병렬 이관</span></div>
+        <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_ana">스토리지 분석</span></div>
+        <a href="mailto:support@syncdataguard.com" class="pbtn pg" data-i18n="btn1">구매 문의</a>
+      </div>
+      <div class="pc hl">
+        <div class="pc-pop" data-i18n="popular">인기</div>
+        <div class="pc-name">Pro</div>
+        <div class="pc-desc" data-i18n="pd2">정기 이관이 필요한 IT 운영팀에 최적입니다.</div>
+        <div class="pc-orig" data-i18n="po2">2,400,000원</div>
+        <div class="pc-price" data-i18n="pp2p">1,990,000원<span data-i18n="pps">/라이선스</span></div>
+        <div class="pc-disc" data-i18n="disc">17% 할인</div>
+        <div class="pc-maint" data-i18n="pm2">유지보수 연 398,000원 (선택)</div>
+        <div class="pc-div"></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_bas">Basic 모든 기능</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_schf">예약 이관 (일간·주간·Cron)</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_bw">대역폭 제어</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_p4">병렬 최대 4 스트림</span></div>
+        <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_chk">청크 병렬 이관</span></div>
+        <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_ana">스토리지 분석</span></div>
+        <a href="mailto:support@syncdataguard.com" class="pbtn pm" data-i18n="btn2">구매 문의</a>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Enterprise</div>
+        <div class="pc-desc" data-i18n="pd3">대규모 인프라 · 보안 환경 · 공공기관에 적합합니다.</div>
+        <div class="pc-orig" data-i18n="po3">12,000,000원</div>
+        <div class="pc-price" data-i18n="pp3p">9,990,000원<span data-i18n="pps">/라이선스</span></div>
+        <div class="pc-disc" data-i18n="disc">17% 할인</div>
+        <div class="pc-maint" data-i18n="pm3">유지보수 연 1,998,000원 (선택)</div>
+        <div class="pc-div"></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_pro">Pro 모든 기능</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_chkf">청크 병렬 이관 (무제한)</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_p16">병렬 최대 16 스트림</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_anaf">스토리지 분석 · 이력 관리</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_off">망분리 · 오프라인 설치</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_sup">전담 기술 지원</span></div>
+        <a href="mailto:support@syncdataguard.com" class="pbtn pg" data-i18n="btn3">도입 문의 →</a>
+      </div>
+    </div>
+    <div class="price-note" data-i18n="price_note">서버 1대 기준 · 추가 서버 기본 가격의 50% · 7일 무료 체험 · 신용카드 불필요</div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-logo">SyncData<em>Guard</em> <span style="font-size:12px;color:var(--muted);font-family:var(--font-body);font-weight:300">by CloudFactory</span></div>
+    <div class="foot-links">
+      <a href="#features" data-i18n="nav_feat">기능</a>
+      <a href="#arch" data-i18n="nav_arch">아키텍처</a>
+      <a href="#report" data-i18n="nav_report">리포트</a><a href="#pricing" data-i18n="nav_price">가격</a>
+      <a href="mailto:support@syncdataguard.com" data-i18n="foot_contact">이메일 문의</a>
+    </div>
+  </div>
+  <div class="foot-copy">© 2026 CloudFactory. All rights reserved.</div>
+</footer>
+
+<script>
+const D = {
+  ko:{
+    nav_why:'왜 SyncDataGuard?',nav_feat:'기능',nav_arch:'아키텍처',nav_price:'가격',nav_contact:'문의',nav_report:'리포트',nav_cta:'무료 체험',
+    hero_tag:'파일 기반 대용량 데이터 이관',
+    hero_h1:'어떤 서버도.<br>어떤 규모도.<br><em>안전하고 빠르게 해결됩니다.</em>',
+    hero_sub:'이관도, 백업도, 분석도. 기존 솔루션이 포기하는 환경에서도 SyncData Guard는 동작합니다.<br><strong>rsync 지원 서버는 직접 연결</strong>, 그 외 모든 환경은 <strong>NFS/SMB 마운트</strong>로 해결합니다.',
+    hero_cta1:'무료 체험 시작 →',hero_cta2:'왜 SyncDataGuard?',
+    s1:'병렬 스트림',s2:'데이터 정합성',s3:'벤더 제약',
+    term_ttl:'SyncData Guard — 실시간 모니터',
+    t1:'연결 확인',t2:'스캔 완료',t2v:'8,432,110 파일 · 312 TB',t3:'이관 진행 중... (청크 분할 · 16 병렬)',
+    ta:'전체',done:'완료',spd:'속도',eta:'완료까지',etav:'약 4시간 18분',
+    why_tag:'왜 SyncData Guard?',why_h2:'기존 방법의 한계를<br>넘습니다.',
+    why_desc:'단순 rsync 스크립트는 대용량에서 불안정하고, 벤더 전용 툴은 같은 제조사끼리만 됩니다. SyncData Guard는 이관뿐 아니라 정기 백업까지 하나의 솔루션으로 해결합니다.',
+    cmp_feature:'기능',cmp_rsync:'단순 rsync',cmp_vendor:'벤더 전용 툴',
+    c1:'GUI 모니터링',c2:'벤더 간 이관',c3:'페타급 안정성',c4:'청크 병렬 이관',c5:'예약 자동화',c6:'정합성 리포트',c7:'오프라인 설치',c8:'도입 비용',c8a:'낮음 (인건비↑)',c8b:'억대 이상',c8c:'합리적',c8a2:'△ 제한적',c8b2:'✕',c8c2:'✓',cv1:'△ 제한적',cv3:'△ 자사만',cv5:'△ 별도 구축',cv6:'△ 제한적',cv9:'△ 별도 클라이언트',c9:'웹 UI (브라우저만으로)',c10:'스토리지 분석→안전한 스캔→이관→검증→리포트 까지 단번에 해결',
+    feat_tag:'핵심 기능',feat_h2:'이관을 완전히<br>통제합니다.',feat_desc:'시작부터 검증까지, 모든 단계를 하나의 솔루션으로 처리합니다.',
+    f1t:'청크 병렬 이관',f1d:'대용량 폴더를 N개 청크로 분할해 최대 16개 스트림으로 동시 전송합니다.',f1g:'Enterprise: 최대 16 스트림',
+    f2t:'실시간 모니터링',f2d:'WebSocket 기반 대시보드로 폴더별 진행률, 속도, ETA, 에러를 실시간으로 확인합니다.',f2g:'모든 플랜',
+    f3t:'대역폭 제어',f3d:'정밀한 대역폭 제한으로 이관 중에도 운영 서비스 영향을 최소화합니다.',f3g:'서비스 무중단',
+    f4t:'정합성 리포트 & 빠른 서비스 전환',f4d:'이관 완료 즉시 파일 수·체크섬 검증 결과를 HTML 리포트로 출력합니다. 검증 결과를 근거로 서비스 전환 시점을 즉시 결정해 전환 시간을 최소화합니다.',f4g:'즉시 전환 결정',
+    f5t:'예약 이관 & 정기 백업',f5d:'일간·주간·월간·Cron 스케줄로 정기 이관과 백업을 자동화합니다. 소중한 데이터를 데일리 백업, 주말 백업으로 안전하게 지킵니다.',f5g:'Pro · Enterprise',
+    f6t:'중단 & 재개 / 에러 추적',f6d:'언제든 중단하고 이어받을 수 있습니다. 에러 로그를 파일 단위로 기록·다운로드할 수 있습니다.',f6g:'완전한 제어',
+    f7t:'스토리지 분석 (CPU 최소 부하)',f7d:'서비스 운영 중에도 CPU 최저 우선순위로 백그라운드 분석합니다. 이관 전후 파일 수·용량 비교, 스냅샷 증감 추적으로 이상 징후를 즉시 감지합니다.',f7g:'Enterprise · 무중단 분석',
+    f8t:'예약 이관 & 정기 백업',f8d:'일간·주간·월간·Cron 스케줄로 정기 이관과 백업을 자동화합니다. 소중한 데이터를 데일리·주말 백업으로 안전하게 지킵니다.',f8g:'Pro · Enterprise',
+    arch_tag:'이관 아키텍처',arch_h2:'어떤 환경 조합도<br>지원합니다.',arch_desc:'rsync를 지원하는 서버·NAS는 직접 연결하고, 지원하지 않으면 NFS/SMB 마운트로 해결합니다.',
+    rec:'추천',m1t:'원격 → 원격',m1s:'rsync 지원 서버·NAS 간',m1d:'SyncData Guard가 제어만 담당하고 소스에서 직접 타겟으로 전송합니다. 네트워크 효율 최대, 페타급 최적.',
+    src:'소스 서버·NAS',tgt:'타겟 서버·NAS',ctrl:'🖥 SyncData Guard (제어)',m1n:'가장 빠름 · 대역폭 100% · 페타급 최적',
+    m2t:'로컬(NAS) → 로컬(NAS)',m2s:'NFS/SMB 마운트 방식',m2d:'rsync가 없는 NAS도 NFS/SMB 마운트로 이관합니다. 벤더 무관, 에이전트 불필요.',
+    m2src:'로컬(NAS)',m2ss:'NFS 마운트 ↓',m2tgt:'로컬(NAS)',m2ts:'NFS 마운트 ↓',m2ctrl:'🖥 SyncData Guard (중계·이관)',m2n:'벤더 무관 · rsync 불필요 · HNAS·NetApp',
+    m3t:'로컬 ↔ 원격',m3s:'혼합·단일 서버 환경',m3d:'SyncData Guard 서버가 소스·타겟 한쪽을 담당합니다. 파일서버→NAS, NAS→클라우드 등 다양한 시나리오.',
+    m3sg:'SyncData Guard 서버',m3ss:'소스 겸 제어',m3tg:'원격 서버·NAS',m3ts:'모든 벤더',m3c:'SSH over rsync · NFS/SMB',m3n:'유연한 구성 · NAS 마운트 지원',
+    nas_title:'✅ 검증된 NAS / 서버 호환 목록',na1:'SSH+rsync 직접',na2:'SSH+rsync 직접',na3:'SSH+rsync 직접',na4:'NFS 마운트',na5:'NFS/SMB 마운트',na6:'마운트 이관',
+    nas_foot:'rsync를 지원하는 모든 Linux 서버·NAS와 직접 연결 가능 · NFS/SMB 마운트로 나머지 모두 지원',
+    os_title:'SyncData Guard 설치 가능 서버 OS (NAS 자체 OS 무관)',os_note:'패키지 매니저 자동 감지 (apt/dnf/yum) · 완전 오프라인 설치 · 신규 OS 자동 지원',
+    pred_tag:'이관 이력 & 예측',pred_h3:'"다음 이관, 얼마나 걸릴까요?"<br>이제 데이터로 답합니다.',
+    pred_p:'매 이관마다 변경분(delta)이 줄어들면서 최종 이관 소요 시간이 단축됩니다. 이력 기반 예측으로 312TB 규모도 최종 이관은 약 1시간 — 서비스 중단 시간을 최소화합니다.',
+    pp1:'작업별 속도 · 시간 · 파일 수 자동 기록',pp2:'다음 이관 완료 예상 시간 자동 계산',pp3:'정합성 리포트로 즉각적인 서비스 전환 결정',pp4:'경영진 보고 · 서비스 점검 일정 수립 근거',
+    pred_box_title:'📊 이관 예측',pb1k:'이관 데이터',pb2k:'평균 속도',pb3k:'이력 기준',pb3v:'3회',pb4k:'최종 이관 예상',pb4v:'약 1시간',pb4v2:'(delta 동기화 기준)',pred_conf:'신뢰도 94%',
+    price_tag:'가격',price_h2:'한 번 구매,<br>영구 사용.',price_desc:'1카피 영구 라이선스. 유지보수는 선택적으로 연장하실 수 있습니다.',
+    pd1:'소규모 팀의 간단한 이관에 적합합니다.',po1:'590,000원',pp1p:'490,000원<span>/라이선스</span>',disc:'17% 할인',pm1:'업데이트 · 기술 지원은 별도 문의',
+    pd2:'정기 이관이 필요한 IT 운영팀에 최적입니다.',po2:'2,400,000원',pp2p:'1,990,000원<span>/라이선스</span>',pm2:'업데이트 · 기술 지원은 별도 문의',
+    pd3:'대용량 인프라, 보안 환경, 기업, 공공기관에 적합합니다.',po3:'12,000,000원',pp3p:'9,990,000원<span>/라이선스</span>',pm3:'업데이트 · 기술 지원은 별도 문의',
+    pps:'/라이선스',popular:'인기',
+    pf_all:'모든 이관 방식 (로컬↔원격)',pf_mon:'실시간 모니터링',pf_ver:'정합성 검증 & 리포트',pf_p1:'병렬 1 스트림',pf_sch:'예약 이관',pf_chk:'청크 병렬 이관',pf_ana:'스토리지 분석',
+    pf_bas:'Basic 모든 기능',pf_schf:'예약 이관 (일간·주간·Cron)',pf_bw:'대역폭 제어',pf_p4:'병렬 최대 4 스트림',
+    pf_pro:'Pro 모든 기능',pf_chkf:'청크 병렬 이관 (무제한)',pf_p16:'병렬 최대 16 스트림',pf_anaf:'스토리지 분석 · 이력 관리',pf_off:'망분리 · 오프라인 설치',pf_sup:'전담 기술 지원',
+    btn1:'구매 문의',btn2:'구매 문의',btn3:'도입 문의 →',
+    pipe_tag:'원 파이프라인',pipe_h3:'스토리지 분석부터 리포트까지<br>단번에 끝납니다.',
+    pipe_p:'rsync 명령어를 몰라도 됩니다. 서버 등록부터 스캔, 이관 실행, 정합성 검증, 리포트 출력까지 하나의 웹 UI에서 클릭 몇 번으로 완료됩니다.',
+    pp_1:'rsync 명령어 지식 불필요',pp_2:'설치 후 브라우저로 즉시 접속',pp_3:'이관 완료 = 리포트 완성 = 서비스 전환 판단',pp_4:'추가 툴·스크립트 불필요',
+    step_1:'1. 서버 등록',step_1d:'소스·타겟 서버 연결 확인',click_1:'클릭',
+    step_2:'2. 스캔 & 설정',step_2d:'파일 수·용량 파악, 병렬·청크 설정',click_2:'클릭',
+    step_3:'3. 이관 실행',step_3d:'실시간 모니터링 · 대역폭 제어',click_3:'클릭',
+    step_4:'4. 검증 & 리포트',step_4d:'정합성 확인 → HTML 리포트 다운로드',done_badge:'완료',
+    rpt_tag:'실제 이관 리포트',rpt_h2:'이관 완료 즉시<br>리포트가 생성됩니다.',rpt_desc:'서비스 전환 결정에 필요한 모든 정보가 담긴 HTML 리포트를 자동 생성합니다.',
+    rpt_p1t:'이관 완료 즉시 자동 생성',rpt_p1d:'이관 완료와 동시에 HTML 리포트가 자동으로 생성됩니다.',
+    rpt_p2t:'서비스 전환 즉시 결정',rpt_p2d:'정합성 검증 결과를 근거로 서비스 전환 여부를 즉시 결정할 수 있습니다.',
+    rpt_p3t:'단일 HTML 파일',rpt_p3d:'외부 의존성 없는 단일 HTML 파일로 보관·공유·보고서 제출에 바로 활용합니다.',
+    foot_contact:'이메일 문의',
+    price_note:'서버 1대 기준 · 추가 서버 기본 가격의 50% · 7일 무료 체험 · 신용카드 불필요 · 유지보수 및 기술 문의는 별도 문의',
+  },
+  en:{
+    nav_why:'Why SyncDataGuard?',nav_feat:'Features',nav_arch:'Architecture',nav_price:'Pricing',nav_contact:'Contact',nav_report:'Report',nav_cta:'Free trial',
+    hero_tag:'File-based large-scale data migration',
+    hero_h1:'Any server.<br>Any scale.<br><em>Done.</em>',
+    hero_sub:'Migration. Backup. Analysis. SyncData Guard works where others give up.<br><strong>rsync-capable servers connect directly.</strong> Everything else handled via <strong>NFS/SMB mount.</strong>',
+    hero_cta1:'Start free trial →',hero_cta2:'Why SyncDataGuard?',
+    s1:'Parallel streams',s2:'Data integrity',s3:'Vendor lock-in',
+    term_ttl:'SyncData Guard — Live monitor',
+    t1:'Connection verified',t2:'Scan complete',t2v:'8,432,110 files · 312 TB',t3:'Migrating... (chunk split · 16 parallel)',
+    ta:'Overall',done:'Done',spd:'Speed',eta:'ETA',etav:'~4h 18m',
+    why_tag:'Why SyncData Guard?',why_h2:'Beyond the limits<br>of existing tools.',
+    why_desc:'Plain rsync breaks at scale. Vendor tools only work within the same brand. SyncData Guard handles large-scale migration and scheduled backup — all in one solution.',
+    cmp_feature:'Feature',cmp_rsync:'Plain rsync',cmp_vendor:'Vendor tool',
+    c1:'GUI monitoring',c2:'Cross-vendor migration',c3:'Petabyte stability',c4:'Chunk parallel transfer',c5:'Scheduled automation',c6:'Integrity report',c7:'Offline install',c8:'Cost',c8a:'Low (labor cost↑)',c8b:'$100K+',c8c:'Affordable',cv1:'△ Limited',cv3:'△ Same vendor only',cv5:'△ Manual setup',cv6:'△ Limited',cv9:'△ Separate client',c9:'Web UI (browser only)',c10:'Storage analysis → scan → migrate → verify → report. All in one.',
+    feat_tag:'Core features',feat_h2:'Complete control<br>over every migration.',feat_desc:'From launch to verification — one solution handles it all.',
+    f1t:'Parallel chunk transfer',f1d:'Split large folders into N chunks and transfer with up to 16 simultaneous streams.',f1g:'Enterprise: up to 16 streams',
+    f2t:'Real-time monitoring',f2d:'Live WebSocket dashboard shows per-folder progress, speed, ETA, and error logs.',f2g:'All plans',
+    f3t:'Bandwidth control',f3d:'Precise bandwidth limits keep production services online throughout migration.',f3g:'Zero disruption',
+    f4t:'Integrity report & fast cutover',f4d:'An HTML integrity report is generated immediately after migration. Use it as the definitive go/no-go for service cutover — minimizing switchover time.',f4g:'Instant cutover decision',
+    f5t:'Scheduled migration',f5d:'Daily, weekly, monthly, or Cron schedules for fully automated recurring migrations.',f5g:'Pro · Enterprise',
+    f6t:'Pause & resume / Error tracking',f6d:'Stop anytime and resume from where you left off. Completed folders are skipped. All errors logged per file and downloadable.',f6g:'Full control',
+    f7t:'Storage intelligence (low CPU)',f7d:'Runs at lowest CPU priority in the background — zero impact on running services. Analyzes storage before and after migration and instantly flags anomalies.',f7g:'Enterprise · Zero-impact analysis',
+    f8t:'Scheduled migration & backup',f8d:'Daily, weekly, monthly or Cron schedules automate recurring migrations and backups. Protect your data with scheduled backups — no manual intervention.',f8g:'Pro · Enterprise',
+    arch_tag:'Architecture',arch_h2:'Any environment.<br>Any combination.',arch_desc:'rsync-capable servers connect directly. Non-rsync storage handled via NFS/SMB mount. No agent required.',
+    rec:'Best',m1t:'Remote → Remote',m1s:'Between rsync-capable servers · NAS',m1d:'SyncData Guard orchestrates only. rsync runs source-to-target directly — maximum throughput, petabyte-optimized.',
+    src:'Source server · NAS',tgt:'Target server · NAS',ctrl:'🖥 SyncData Guard (orchestrate)',m1n:'Fastest · 100% bandwidth · Petabyte-optimized',
+    m2t:'Local(NAS) → Local(NAS)',m2s:'NFS/SMB mount-based',m2d:'Mount both NAS via NFS/SMB to SyncData Guard. Works with any vendor — no rsync, no agent needed.',
+    m2src:'Local(NAS)',m2ss:'NFS mount ↓',m2tgt:'Local(NAS)',m2ts:'NFS mount ↓',m2ctrl:'🖥 SyncData Guard (relay)',m2n:'Vendor-agnostic · No rsync · HNAS · NetApp',
+    m3t:'Local ↔ Remote',m3s:'Mixed or single-server',m3d:'SyncData Guard server acts as source or target. File server→NAS, NAS→cloud, or same-server partitions.',
+    m3sg:'SyncData Guard server',m3ss:'source & control',m3tg:'Remote server · NAS',m3ts:'any vendor',m3c:'SSH over rsync · NFS/SMB',m3n:'Flexible topology · NAS mount support',
+    nas_title:'✅ Verified NAS / server compatibility',na1:'SSH+rsync direct',na2:'SSH+rsync direct',na3:'SSH+rsync direct',na4:'NFS mount',na5:'NFS/SMB mount',na6:'Mount migration',
+    nas_foot:'Any rsync-capable Linux server · NAS connects directly · NFS/SMB mount covers everything else',
+    os_title:'Supported OS for SyncData Guard server (NAS OS does not matter)',os_note:'Package manager auto-detection (apt/dnf/yum) · Full offline install · Future OS versions auto-supported',
+    pred_tag:'Migration history & prediction',pred_h3:'"How long will the next migration take?"<br>Now you have a data-driven answer.',
+    pred_p:'Each migration run reduces the delta. With history-based prediction, even 312 TB finishes in ~1 hour on final cutover — minimizing service downtime to an absolute minimum.',
+    pp1:'Speed · duration · file count logged per job',pp2:'Auto-calculated ETA for next migration',pp3:'Integrity report enables immediate cutover decision',pp4:'Evidence base for management reports & scheduling',
+    pred_box_title:'📊 Migration prediction',pb1k:'Data size',pb2k:'Avg speed',pb3k:'Based on',pb3v:'3 prior jobs',pb4k:'Final migration',pb4v:'~1 hour',pb4v2:'(delta sync only)',pred_conf:'94% confidence',
+    price_tag:'Pricing',price_h2:'One-time purchase.<br>Yours forever.',price_desc:'Perpetual license per copy. Optional annual maintenance covers updates and priority support.',
+    pd1:'For small teams with straightforward migration needs.',po1:'$590',pp1p:'$490<span>/license</span>',disc:'17% OFF',pm1:'Updates & technical support: contact us',
+    pd2:'For IT teams with recurring migration workflows.',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'Updates & technical support: contact us',
+    pd3:'For large-scale infrastructure, security-sensitive environments, enterprises and public institutions.',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'Updates & technical support: contact us',
+    pps:'/license',popular:'Most popular',
+    pf_all:'All transfer modes (local ↔ remote)',pf_mon:'Real-time monitoring',pf_ver:'Integrity verification & report',pf_p1:'1 parallel stream',pf_sch:'Scheduled migration',pf_chk:'Chunk parallel transfer',pf_ana:'Storage analytics',
+    pf_bas:'Everything in Basic',pf_schf:'Scheduled migration (daily/weekly/Cron)',pf_bw:'Bandwidth control',pf_p4:'Up to 4 parallel streams',
+    pf_pro:'Everything in Pro',pf_chkf:'Chunk parallel transfer (unlimited)',pf_p16:'Up to 16 parallel streams',pf_anaf:'Storage analytics · history tracking',pf_off:'Air-gapped · offline install',pf_sup:'Dedicated support',
+    btn1:'Contact sales',btn2:'Contact sales',btn3:'Contact sales →',
+    pipe_tag:'One pipeline',pipe_h3:'Storage analysis to final report.<br>All in one workflow.',
+    pipe_p:'No rsync knowledge needed. Server setup, scan, migration, integrity verification, and report — all from one web UI, no other tools required.',
+    pp_1:'No rsync command-line knowledge needed',pp_2:'Access via browser immediately after install',pp_3:'Migration done = Report ready = Cutover decision made',pp_4:'No additional tools or scripts needed',
+    step_1:'1. Register servers',step_1d:'Connect source & target servers',click_1:'Click',
+    step_2:'2. Scan & configure',step_2d:'File count, size, parallel & chunk settings',click_2:'Click',
+    step_3:'3. Run migration',step_3d:'Live monitoring · bandwidth control',click_3:'Click',
+    step_4:'4. Verify & report',step_4d:'Integrity check → download HTML report',done_badge:'Done',
+    rpt_tag:'Live migration report',rpt_h2:'Report generated<br>the moment migration completes.',rpt_desc:'A complete HTML report is auto-generated at completion — everything you need to make a go/no-go cutover decision.',
+    rpt_p1t:'Auto-generated on completion',rpt_p1d:'No manual steps. HTML report is generated automatically when migration finishes.',
+    rpt_p2t:'Instant cutover decision',rpt_p2d:'Use the integrity verification results as your definitive go/no-go for service cutover.',
+    rpt_p3t:'Single HTML file',rpt_p3d:'Self-contained HTML file — archive, share, or submit as a formal report with no dependencies.',
+    foot_contact:'Contact us',
+    price_note:'1 server per license · Additional servers at 50% · 7-day free trial · No credit card required · Maintenance &amp; support: contact us',
+  },
+  ja:{
+    nav_why:'なぜSyncDataGuard?',nav_feat:'機能',nav_arch:'アーキテクチャ',nav_price:'料金',nav_contact:'お問い合わせ',nav_report:'レポート',nav_cta:'無料トライアル',
+    hero_tag:'ファイルベース大容量データ移行',
+    hero_h1:'どんなサーバーも。<br>どんな規模も。<br><em>対応します。</em>',
+    hero_sub:'移行も、バックアップも、分析も。既存ツールが諦める環境でもSyncData Guardは動作します。<br><strong>rsync対応サーバーは直接接続</strong>、それ以外は<strong>NFS/SMBマウント</strong>で解決します。',
+    hero_cta1:'無料トライアルを始める →',hero_cta2:'なぜSyncDataGuard?',
+    s1:'並列ストリーム',s2:'データ整合性',s3:'ベンダー制約',
+    term_ttl:'SyncData Guard — リアルタイムモニター',
+    t1:'接続確認',t2:'スキャン完了',t2v:'8,432,110ファイル · 312 TB',t3:'移行中... (チャンク分割 · 16並列)',
+    ta:'全体',done:'完了',spd:'速度',eta:'残り時間',etav:'約4時間18分',
+    why_tag:'なぜSyncData Guard?',why_h2:'既存ツールの限界を<br>超えます。',
+    why_desc:'単純なrsyncスクリプトは大規模では不安定で、ベンダー専用ツールは同一メーカー間のみ対応。SyncData Guardは移行だけでなく定期バックアップまで1つのソリューションで解決します。',
+    cmp_feature:'機能',cmp_rsync:'単純rsync',cmp_vendor:'ベンダー専用ツール',
+    c1:'GUI監視',c2:'ベンダー間移行',c3:'ペタバイト安定性',c4:'チャンク並列転送',c5:'スケジュール自動化',c6:'整合性レポート',c7:'オフラインインストール',c8:'導入コスト',c8a:'低（人件費↑）',c8b:'億円以上',c8c:'リーズナブル',cv1:'△ 制限あり',cv3:'△ 自社製品のみ',cv5:'△ 別途構築',cv6:'△ 制限あり',cv9:'△ 別途クライアント',c9:'Web UI（ブラウザのみ）',c10:'ストレージ分析→スキャン→移行→検証→レポートまで一気に完結',
+    feat_tag:'主な機能',feat_h2:'移行を完全に<br>制御します。',feat_desc:'開始から検証まで、すべてのステップを1つのソリューションで処理します。',
+    f1t:'チャンク並列転送',f1d:'大容量フォルダをNチャンクに分割し、最大16ストリームで同時転送します。',f1g:'Enterprise: 最大16ストリーム',
+    f2t:'リアルタイム監視',f2d:'WebSocketベースのダッシュボードでフォルダ別進捗、速度、ETA、エラーをリアルタイム確認。',f2g:'全プラン',
+    f3t:'帯域幅制御',f3d:'精密な帯域幅制限で移行中も本番サービスへの影響を最小化します。',f3g:'サービス無停止',
+    f4t:'整合性レポート & 迅速なサービス切替',f4d:'移行完了直後にファイル数・チェックサム検証結果をHTMLレポートとして出力。検証結果を根拠にサービス切替タイミングを即決できます。',f4g:'即時切替判断',
+    f5t:'スケジュール移行 & バックアップ',f5d:'日次・週次・月次・Cronスケジュールで定期移行・バックアップを自動化します。大切なデータを、手動作業なしで守ります。',f5g:'Pro · Enterprise',
+    f6t:'一時停止 & 再開 / エラー追跡',f6d:'いつでも中断・再開できます。完了済みフォルダは自動スキップ。エラーログをファイル単位で記録・ダウンロード可能。',f6g:'完全な制御',
+    f7t:'ストレージ分析（CPU最小負荷）',f7d:'最低CPU優先度のバックグラウンドで実行し、稼働中サービスへの影響はゼロ。移行前後のファイル数・容量比較、スナップショット増減追跡で異常を即時検知。',f7g:'Enterprise · 無停止分析',
+    f8t:'スケジュール移行 & バックアップ',f8d:'日次・週次・月次・Cronスケジュールで定期移行・バックアップを自動化。大切なデータをデイリー・週末バックアップで安全に守ります。',f8g:'Pro · Enterprise',
+    arch_tag:'アーキテクチャ',arch_h2:'あらゆる環境の<br>組み合わせに対応。',arch_desc:'rsync対応サーバー·NASは直接接続、非対応はNFS/SMBマウントで解決。エージェントインストール不要。',
+    rec:'推奨',m1t:'リモート → リモート',m1s:'rsync対応サーバー·NAS間',m1d:'SyncData Guardは制御のみ担当。rsyncがソースから直接ターゲットへ転送。ネットワーク効率最大、ペタバイト最適。',
+    src:'ソースサーバー·NAS',tgt:'ターゲットサーバー·NAS',ctrl:'🖥 SyncData Guard (制御)',m1n:'最速 · 帯域幅100% · ペタバイト最適',
+    m2t:'ローカル(NAS) → ローカル(NAS)',m2s:'NFS/SMBマウント方式',m2d:'rsyncのないNASもNFS/SMBでSyncData Guardにマウントして移行。ベンダー不問、エージェント不要。',
+    m2src:'ローカル(NAS)',m2ss:'NFSマウント ↓',m2tgt:'ローカル(NAS)',m2ts:'NFSマウント ↓',m2ctrl:'🖥 SyncData Guard (中継)',m2n:'ベンダー不問 · rsync不要 · HNAS · NetApp',
+    m3t:'ローカル ↔ リモート',m3s:'混合·単一サーバー環境',m3d:'SyncData Guardサーバーがソース·ターゲット一方を担当。ファイルサーバー→NAS、NAS→クラウド等様々なシナリオに対応。',
+    m3sg:'SyncData Guardサーバー',m3ss:'ソース兼制御',m3tg:'リモートサーバー·NAS',m3ts:'全ベンダー',m3c:'SSH over rsync · NFS/SMB',m3n:'柔軟な構成 · NASマウント対応',
+    nas_title:'✅ 検証済みNAS / サーバー互換リスト',na1:'SSH+rsync直接',na2:'SSH+rsync直接',na3:'SSH+rsync直接',na4:'NFSマウント',na5:'NFS/SMBマウント',na6:'マウント移行',
+    nas_foot:'rsync対応の全Linuxサーバー·NASに直接接続 · NFS/SMBマウントで残りすべてに対応',
+    os_title:'SyncData Guardインストール可能なサーバーOS（NAS自体のOSは不問）',os_note:'パッケージマネージャー自動検出(apt/dnf/yum) · 完全オフラインインストール · 新OSバージョン自動対応',
+    pred_tag:'移行履歴 & 予測',pred_h3:'「次の移行、どのくらいかかる？」<br>データで答えが出ます。',
+    pred_p:'全移行作業の速度・時間・ファイル数を履歴として蓄積。次回移行の完了時間を自動予測し、夜間バッチ計画とサービス切替スケジュールを事前に立てられます。',
+    pp1:'作業別速度・時間・ファイル数を自動記録',pp2:'次回移行の完了予想時間を自動計算',pp3:'整合性レポートで即時サービス切替判断',pp4:'経営報告・サービス停止スケジュール立案の根拠',
+    pred_box_title:'📊 移行予測',pb1k:'データ量',pb2k:'平均速度',pb3k:'過去実績',pb3v:'3回',pb4k:'最終移行予想',pb4v:'約1時間',pb4v2:'（差分同期ベース）',pred_conf:'信頼度94%',
+    price_tag:'料金',price_h2:'一度の購入で<br>永久使用。',price_desc:'1コピー永久ライセンス。メンテナンス（アップデート・サポート）は任意で更新いただけます。',
+    pd1:'小規模チームのシンプルな移行に適しています。',po1:'¥68,000',pp1p:'¥56,800<span>/ライセンス</span>',disc:'17% OFF',pm1:'アップデート・技術サポートは別途お問い合わせ',
+    pd2:'定期移行が必要なITチームに最適です。',po2:'¥278,000',pp2p:'¥228,000<span>/ライセンス</span>',pm2:'アップデート・技術サポートは別途お問い合わせ',
+    pd3:'大規模インフラ・セキュリティ環境・官公庁に適しています。',po3:'¥1,380,000',pp3p:'¥1,148,000<span>/ライセンス</span>',pm3:'アップデート・技術サポートは別途お問い合わせ',
+    pps:'/ライセンス',popular:'人気',
+    pf_all:'全転送方式（ローカル↔リモート）',pf_mon:'リアルタイム監視',pf_ver:'整合性検証 & レポート',pf_p1:'並列1ストリーム',pf_sch:'スケジュール移行',pf_chk:'チャンク並列転送',pf_ana:'ストレージ分析',
+    pf_bas:'Basicの全機能',pf_schf:'スケジュール移行（日次·週次·Cron）',pf_bw:'帯域幅制御',pf_p4:'最大4並列ストリーム',
+    pf_pro:'Proの全機能',pf_chkf:'チャンク並列転送（無制限）',pf_p16:'最大16並列ストリーム',pf_anaf:'ストレージ分析 · 履歴管理',pf_off:'エアギャップ · オフラインインストール',pf_sup:'専任サポート',
+    btn1:'お問い合わせ',btn2:'お問い合わせ',btn3:'導入のお問い合わせ →',
+    pipe_tag:'ワンパイプライン',pipe_h3:'ストレージ分析からレポートまで<br>一気に完結します。',
+    pipe_p:'rsyncコマンドの知識不要。サーバー登録からスキャン、移行実行、整合性検証、レポート出力まで1つのWebUIでクリック数回で完了。他のツール不要。',
+    pp_1:'rsyncコマンドの知識不要',pp_2:'インストール後すぐブラウザでアクセス',pp_3:'移行完了=レポート完成=サービス切替判断',pp_4:'追加ツール·スクリプト不要',
+    step_1:'1. サーバー登録',step_1d:'ソース·ターゲットサーバー接続確認',click_1:'クリック',
+    step_2:'2. スキャン & 設定',step_2d:'ファイル数·容量把握、並列·チャンク設定',click_2:'クリック',
+    step_3:'3. 移行実行',step_3d:'リアルタイム監視 · 帯域幅制御',click_3:'クリック',
+    step_4:'4. 検証 & レポート',step_4d:'整合性確認 → HTMLレポートダウンロード',done_badge:'完了',
+    rpt_tag:'移行レポート',rpt_h2:'移行完了と同時に<br>レポートが自動生成されます。',rpt_desc:'サービス切替判断に必要なすべての情報を含むHTMLレポートを自動生成します。',
+    rpt_p1t:'完了即時自動生成',rpt_p1d:'手動作業不要。移行完了と同時にHTMLレポートが自動生成されます。',
+    rpt_p2t:'即時サービス切替判断',rpt_p2d:'整合性検証結果を根拠にサービス切替の可否を即時判断できます。',
+    rpt_p3t:'単一HTMLファイル',rpt_p3d:'外部依存なしの単一HTMLファイルで保管・共有・報告書提出にそのまま活用できます。',
+    foot_contact:'メールでお問い合わせ',
+    price_note:'サーバー1台基準 · 追加サーバーは基本価格の50% · 7日間無料トライアル · クレジットカード不要 · メンテナンス・技術サポートは別途お問い合わせ',
+  }
+};
+
+let L = 'ko';
+function setLang(lang) {
+  L = lang;
+  document.documentElement.lang = lang;
+  document.body.style.fontFamily = lang === 'en' ? "'DM Sans', var(--font-body)" : 'var(--font-body)';
+  document.querySelectorAll('.lang-sw button').forEach((b,i) => b.classList.toggle('on', ['ko','en','ja'][i] === lang));
+  const d = D[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (d[k] !== undefined) el.innerHTML = d[k];
+  });
+  document.title = {ko:'SyncData Guard — 파일 기반 대용량 데이터 이관',en:'SyncData Guard — File-based large-scale data migration',ja:'SyncData Guard — ファイルベース大容量データ移行'}[lang];
+  const url = new URL(location); url.searchParams.set('lang', lang); history.replaceState({}, '', url);
+}
+(()=>{
+  const p = new URLSearchParams(location.search).get('lang');
+  const bl = (navigator.language||'en').toLowerCase();
+  setLang(p && D[p] ? p : bl.startsWith('ko') ? 'ko' : bl.startsWith('ja') ? 'ja' : 'en');
+})();
+</script>
+</body>
+</html>
