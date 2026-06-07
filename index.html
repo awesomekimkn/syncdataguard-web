@@ -237,9 +237,57 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
   section{padding:64px 24px}
   .foot-inner{flex-direction:column;gap:20px;text-align:center}
 }
+
+/* ── Download Trial Section ── */
+.download{background:var(--bg);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.dl-inner{max-width:900px;margin:0 auto;text-align:center}
+.dl-badge{display:inline-block;padding:4px 14px;background:rgba(0,229,160,.12);color:var(--mint);border-radius:20px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+.dl-h2{font-family:var(--font-display);font-size:36px;font-weight:800;letter-spacing:-1.5px;margin-bottom:14px}
+.dl-desc{font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:36px}
+.dl-box{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+.dl-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 32px;min-width:220px;text-align:left;transition:border-color .2s}
+.dl-card:hover{border-color:var(--mint)}
+.dl-card-icon{font-size:28px;margin-bottom:12px}
+.dl-card-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px}
+.dl-card-desc{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:var(--mint);color:var(--bg);border-radius:9px;font-size:13px;font-weight:600;text-decoration:none;transition:all .2s}
+.dl-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,229,160,.3)}
+.dl-btn-s{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.dl-btn-s:hover{border-color:var(--mint);color:var(--mint);box-shadow:none}
+.dl-note{font-size:12px;color:var(--muted);margin-top:8px}
+.dl-spec{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.dl-spec-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.dl-spec-item span:first-child{color:var(--mint);font-weight:700}
+@media(max-width:600px){.dl-box{flex-direction:column;align-items:center}.dl-card{min-width:unset;width:100%}}
 </style>
+
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script>
+  Paddle.Initialize({
+    token: 'live_42e630e81a80874e60f62ad4197',
+    eventCallback: function(event) {
+      if (event.name === 'checkout.completed') {
+        // 결제 완료 시 감사 메시지
+        document.getElementById('paddle-success').style.display = 'block';
+        setTimeout(function() {
+          document.getElementById('paddle-success').style.display = 'none';
+        }, 8000);
+      }
+    }
+  });
+
+  function openCheckout(priceId) {
+    Paddle.Checkout.open({
+      items: [{ priceId: priceId, quantity: 1 }],
+    });
+  }
+</script>
 </head>
 <body>
+<div id="paddle-success" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#00e5a0;color:#0a0f0d;padding:16px 32px;border-radius:12px;font-weight:600;font-size:15px;box-shadow:0 8px 32px rgba(0,229,160,.4)">
+  ✅ 결제가 완료됐습니다! 라이선스 키가 이메일로 발송됩니다.
+</div>
+
 
 <nav>
   <div class="logo">SyncData<em>Guard</em></div>
@@ -247,7 +295,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
     <a href="#why" data-i18n="nav_why">왜 SyncDataGuard?</a>
     <a href="#features" data-i18n="nav_feat">기능</a>
     <a href="#arch" data-i18n="nav_arch">아키텍처</a>
-    <a href="#report" data-i18n="nav_report">리포트</a><a href="#pricing" data-i18n="nav_price">가격</a>
+    <a href="#report" data-i18n="nav_report">리포트</a><a href="#download" data-i18n="nav_dl">다운로드</a><a href="#pricing" data-i18n="nav_price">가격</a>
     <a href="mailto:support@syncdataguard.com" data-i18n="nav_contact">문의</a>
   </div>
   <div class="nav-right">
@@ -256,7 +304,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <button onclick="setLang('en')">EN</button>
       <button onclick="setLang('ja')">日</button>
     </div>
-    <a href="#pricing" class="cta-btn" data-i18n="nav_cta">무료 체험</a>
+    <a href="#download" class="cta-btn" data-i18n="nav_cta">무료 체험</a>
   </div>
 </nav>
 
@@ -269,7 +317,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <h1 data-i18n="hero_h1">어떤 서버도.<br>어떤 규모도.<br><em>가능합니다.</em></h1>
       <p class="hero-sub" data-i18n="hero_sub">기존 솔루션이 포기하는 환경에서도 SyncData Guard는 동작합니다.<br><strong>rsync 지원 서버는 직접 연결</strong>, 그 외 모든 환경은 <strong>NFS/SMB 마운트</strong>로 해결합니다.</p>
       <div class="hero-btns">
-        <a href="#pricing" class="btn-p" data-i18n="hero_cta1">무료 체험 시작 →</a>
+        <a href="#download" class="btn-p" data-i18n="hero_cta1">무료 체험 시작 →</a>
         <a href="#why" class="btn-s" data-i18n="hero_cta2">왜 SyncDataGuard?</a>
       </div>
       <div class="hero-stats">
@@ -391,9 +439,8 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <div class="fc"><div class="fi">📊</div><h3 data-i18n="f2t">실시간 모니터링</h3><p data-i18n="f2d">WebSocket 기반 대시보드로 폴더별 진행률, 속도, 완료 예상 시간, 에러를 실시간으로 확인합니다.</p><span class="ftag" data-i18n="f2g">모든 플랜</span></div>
       <div class="fc"><div class="fi">🎛</div><h3 data-i18n="f3t">대역폭 제어</h3><p data-i18n="f3d">정밀한 대역폭 제한으로 이관 중에도 운영 서비스 영향을 최소화합니다. 야간 자동화와 결합하면 완전 무인 이관이 가능합니다.</p><span class="ftag" data-i18n="f3g">서비스 무중단</span></div>
       <div class="fc"><div class="fi">📑</div><h3 data-i18n="f4t">정합성 리포트 & 빠른 서비스 전환</h3><p data-i18n="f4d">이관 완료 즉시 파일 수·체크섬 검증 결과를 HTML 리포트로 출력합니다. 검증 결과를 근거로 서비스 전환 시점을 즉시 결정해 전환 시간을 최소화합니다.</p><span class="ftag" data-i18n="f4g">즉시 전환 결정</span></div>
+      <div class="fc"><div class="fi">📅</div><h3 data-i18n="f5t">예약 이관</h3><p data-i18n="f5d">일간·주간·월간·Cron 스케줄로 정기 이관을 자동화합니다. 대역폭 제어와 조합해 업무 영향 없이 운영할 수 있습니다.</p><span class="ftag" data-i18n="f5g">Pro · Enterprise</span></div>
       <div class="fc"><div class="fi">⏸</div><h3 data-i18n="f6t">중단 & 재개 / 에러 추적</h3><p data-i18n="f6d">언제든 중단하고 이어받을 수 있습니다. 완료된 폴더는 자동 스킵하며, 에러 로그를 파일 단위로 기록해 다운로드할 수 있습니다.</p><span class="ftag" data-i18n="f6g">완전한 제어</span></div>
-      <div class="fc"><div class="fi">🔍</div><h3 data-i18n="f7t">스토리지 분석 (CPU 최소 부하)</h3><p data-i18n="f7d">서비스 운영 중에도 CPU 최저 우선순위로 백그라운드 분석합니다. 이관 전후 파일 수·용량 비교, 스냅샷 증감 추적으로 이상 징후를 즉시 감지합니다.</p><span class="ftag" data-i18n="f7g">Enterprise · 무중단 분석</span></div>
-      <div class="fc"><div class="fi">📅</div><h3 data-i18n="f8t">예약 이관 & 정기 백업</h3><p data-i18n="f8d">일간·주간·월간·Cron 스케줄로 정기 이관과 백업을 자동화합니다. 소중한 데이터를 데일리 백업, 주말 백업으로 안전하게 지킵니다.</p><span class="ftag" data-i18n="f8g">Pro · Enterprise</span></div>
     </div>
   </div>
 </section>
@@ -652,6 +699,36 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
 </section>
 
 <!-- PRICING -->
+
+<section class="download" id="download">
+  <div class="wrap dl-inner">
+    <div class="dl-badge" data-i18n="dl_badge">무료 평가판</div>
+    <h2 class="dl-h2" data-i18n="dl_h2">지금 바로 시작하세요.</h2>
+    <p class="dl-desc" data-i18n="dl_desc">설치 후 즉시 사용 가능합니다. 신용카드 불필요 · 7일 무료 체험 · 라이선스 없이도 기본 기능 사용 가능</p>
+    <div class="dl-box">
+      <div class="dl-card">
+        <div class="dl-card-icon">🐧</div>
+        <div class="dl-card-title">Linux (x86_64)</div>
+        <div class="dl-card-desc" data-i18n="dl_linux_desc">CentOS 7+, Ubuntu 18.04+<br>Debian 10+, RHEL 7+</div>
+        <a href="https://github.com/awesomekimkn/syncdataguard-web/releases/latest/download/rsync-migrator-linux-x64.zip" class="dl-btn">
+          ⬇ <span data-i18n="dl_download">다운로드</span>
+        </a>
+        <div class="dl-note" data-i18n="dl_size_linux">v1.98 · ~11MB</div>
+      </div>
+    </div>
+    <div class="dl-spec">
+      <div class="dl-spec-item"><span>✓</span><span data-i18n="dl_s1">신용카드 불필요</span></div>
+      <div class="dl-spec-item"><span>✓</span><span data-i18n="dl_s2">7일 무료 체험</span></div>
+      <div class="dl-spec-item"><span>✓</span><span data-i18n="dl_s3">오프라인 설치 지원</span></div>
+      <div class="dl-spec-item"><span>✓</span><span data-i18n="dl_s4">설치 후 즉시 사용</span></div>
+    </div>
+    <p style="margin-top:28px;font-size:13px;color:var(--muted)">
+      <span data-i18n="dl_install_guide">설치 방법:</span>
+      <code style="background:var(--surface);padding:4px 10px;border-radius:6px;font-size:12px;color:var(--mint);margin-left:8px">unzip rsync-migrator-*.zip && sudo bash install.sh</code>
+    </p>
+  </div>
+</section>
+
 <section class="pricing" id="pricing">
   <div class="wrap">
     <div class="sec-tag" data-i18n="price_tag">가격</div>
@@ -673,7 +750,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_sch">예약 이관</span></div>
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_chk">청크 병렬 이관</span></div>
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_ana">스토리지 분석</span></div>
-        <a href="mailto:support@syncdataguard.com" class="pbtn pg" data-i18n="btn1">구매 문의</a>
+        <button onclick="openCheckout('pri_01ktbfqdd35jazg2t9m8m5rdk3')" class="pbtn pg" data-i18n="btn1" style="cursor:pointer;border:none;width:100%">구매하기 →</button>
       </div>
       <div class="pc hl">
         <div class="pc-pop" data-i18n="popular">인기</div>
@@ -690,7 +767,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_p4">병렬 최대 4 스트림</span></div>
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_chk">청크 병렬 이관</span></div>
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_ana">스토리지 분석</span></div>
-        <a href="mailto:support@syncdataguard.com" class="pbtn pm" data-i18n="btn2">구매 문의</a>
+        <button onclick="openCheckout('pri_01ktbftfb7m5q5dp1tzz2fzzcf')" class="pbtn pm" data-i18n="btn2" style="cursor:pointer;border:none;width:100%">구매하기 →</button>
       </div>
       <div class="pc">
         <div class="pc-name">Enterprise</div>
@@ -706,7 +783,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_anaf">스토리지 분석 · 이력 관리</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_off">망분리 · 오프라인 설치</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_sup">전담 기술 지원</span></div>
-        <a href="mailto:support@syncdataguard.com" class="pbtn pg" data-i18n="btn3">도입 문의 →</a>
+        <button onclick="openCheckout('pri_01ktbfvsdzw15kj08r2tthmg6s')" class="pbtn pg" data-i18n="btn3" style="cursor:pointer;border:none;width:100%">구매하기 →</button>
       </div>
     </div>
     <div class="price-note" data-i18n="price_note">서버 1대 기준 · 추가 서버 기본 가격의 50% · 7일 무료 체험 · 신용카드 불필요</div>
@@ -719,7 +796,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
     <div class="foot-links">
       <a href="#features" data-i18n="nav_feat">기능</a>
       <a href="#arch" data-i18n="nav_arch">아키텍처</a>
-      <a href="#report" data-i18n="nav_report">리포트</a><a href="#pricing" data-i18n="nav_price">가격</a>
+      <a href="#report" data-i18n="nav_report">리포트</a><a href="#download" data-i18n="nav_dl">다운로드</a><a href="#pricing" data-i18n="nav_price">가격</a>
       <a href="mailto:support@syncdataguard.com" data-i18n="foot_contact">이메일 문의</a>
     </div>
   </div>
@@ -729,6 +806,15 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
 <script>
 const D = {
   ko:{
+    nav_dl:'다운로드',
+    dl_badge:'무료 평가판',
+    dl_h2:'지금 바로 시작하세요.',
+    dl_desc:'설치 후 즉시 사용 가능합니다. 신용카드 불필요 · 7일 무료 체험 · 라이선스 없이도 기본 기능 사용 가능',
+    dl_linux_desc:'CentOS 7+, Ubuntu 18.04+<br>Debian 10+, RHEL 7+',
+    dl_download:'다운로드',
+    dl_size_linux:'v1.98 · ~11MB',
+    dl_s1:'신용카드 불필요',dl_s2:'7일 무료 체험',dl_s3:'오프라인 설치 지원',dl_s4:'설치 후 즉시 사용',
+    dl_install_guide:'설치 방법:',
     nav_why:'왜 SyncDataGuard?',nav_feat:'기능',nav_arch:'아키텍처',nav_price:'가격',nav_contact:'문의',nav_report:'리포트',nav_cta:'무료 체험',
     hero_tag:'파일 기반 대용량 데이터 이관',
     hero_h1:'어떤 서버도.<br>어떤 규모도.<br><em>안전하고 빠르게 해결됩니다.</em>',
@@ -749,8 +835,6 @@ const D = {
     f4t:'정합성 리포트 & 빠른 서비스 전환',f4d:'이관 완료 즉시 파일 수·체크섬 검증 결과를 HTML 리포트로 출력합니다. 검증 결과를 근거로 서비스 전환 시점을 즉시 결정해 전환 시간을 최소화합니다.',f4g:'즉시 전환 결정',
     f5t:'예약 이관 & 정기 백업',f5d:'일간·주간·월간·Cron 스케줄로 정기 이관과 백업을 자동화합니다. 소중한 데이터를 데일리 백업, 주말 백업으로 안전하게 지킵니다.',f5g:'Pro · Enterprise',
     f6t:'중단 & 재개 / 에러 추적',f6d:'언제든 중단하고 이어받을 수 있습니다. 에러 로그를 파일 단위로 기록·다운로드할 수 있습니다.',f6g:'완전한 제어',
-    f7t:'스토리지 분석 (CPU 최소 부하)',f7d:'서비스 운영 중에도 CPU 최저 우선순위로 백그라운드 분석합니다. 이관 전후 파일 수·용량 비교, 스냅샷 증감 추적으로 이상 징후를 즉시 감지합니다.',f7g:'Enterprise · 무중단 분석',
-    f8t:'예약 이관 & 정기 백업',f8d:'일간·주간·월간·Cron 스케줄로 정기 이관과 백업을 자동화합니다. 소중한 데이터를 데일리·주말 백업으로 안전하게 지킵니다.',f8g:'Pro · Enterprise',
     arch_tag:'이관 아키텍처',arch_h2:'어떤 환경 조합도<br>지원합니다.',arch_desc:'rsync를 지원하는 서버·NAS는 직접 연결하고, 지원하지 않으면 NFS/SMB 마운트로 해결합니다.',
     rec:'추천',m1t:'원격 → 원격',m1s:'rsync 지원 서버·NAS 간',m1d:'SyncData Guard가 제어만 담당하고 소스에서 직접 타겟으로 전송합니다. 네트워크 효율 최대, 페타급 최적.',
     src:'소스 서버·NAS',tgt:'타겟 서버·NAS',ctrl:'🖥 SyncData Guard (제어)',m1n:'가장 빠름 · 대역폭 100% · 페타급 최적',
@@ -773,7 +857,7 @@ const D = {
     pf_all:'모든 이관 방식 (로컬↔원격)',pf_mon:'실시간 모니터링',pf_ver:'정합성 검증 & 리포트',pf_p1:'병렬 1 스트림',pf_sch:'예약 이관',pf_chk:'청크 병렬 이관',pf_ana:'스토리지 분석',
     pf_bas:'Basic 모든 기능',pf_schf:'예약 이관 (일간·주간·Cron)',pf_bw:'대역폭 제어',pf_p4:'병렬 최대 4 스트림',
     pf_pro:'Pro 모든 기능',pf_chkf:'청크 병렬 이관 (무제한)',pf_p16:'병렬 최대 16 스트림',pf_anaf:'스토리지 분석 · 이력 관리',pf_off:'망분리 · 오프라인 설치',pf_sup:'전담 기술 지원',
-    btn1:'구매 문의',btn2:'구매 문의',btn3:'도입 문의 →',
+    btn1:'구매하기 →',btn2:'구매하기 →',btn3:'구매하기 →',
     pipe_tag:'원 파이프라인',pipe_h3:'스토리지 분석부터 리포트까지<br>단번에 끝납니다.',
     pipe_p:'rsync 명령어를 몰라도 됩니다. 서버 등록부터 스캔, 이관 실행, 정합성 검증, 리포트 출력까지 하나의 웹 UI에서 클릭 몇 번으로 완료됩니다.',
     pp_1:'rsync 명령어 지식 불필요',pp_2:'설치 후 브라우저로 즉시 접속',pp_3:'이관 완료 = 리포트 완성 = 서비스 전환 판단',pp_4:'추가 툴·스크립트 불필요',
@@ -789,6 +873,15 @@ const D = {
     price_note:'서버 1대 기준 · 추가 서버 기본 가격의 50% · 7일 무료 체험 · 신용카드 불필요 · 유지보수 및 기술 문의는 별도 문의',
   },
   en:{
+    nav_dl:'Download',
+    dl_badge:'Free Trial',
+    dl_h2:'Get Started Now.',
+    dl_desc:'Ready to use right after installation. No credit card · 7-day free trial · Basic features available without a license',
+    dl_linux_desc:'CentOS 7+, Ubuntu 18.04+<br>Debian 10+, RHEL 7+',
+    dl_download:'Download',
+    dl_size_linux:'v1.98 · ~11MB',
+    dl_s1:'No credit card',dl_s2:'7-day free trial',dl_s3:'Offline install supported',dl_s4:'Ready immediately after install',
+    dl_install_guide:'Install:',
     nav_why:'Why SyncDataGuard?',nav_feat:'Features',nav_arch:'Architecture',nav_price:'Pricing',nav_contact:'Contact',nav_report:'Report',nav_cta:'Free trial',
     hero_tag:'File-based large-scale data migration',
     hero_h1:'Any server.<br>Any scale.<br><em>Done.</em>',
@@ -809,8 +902,6 @@ const D = {
     f4t:'Integrity report & fast cutover',f4d:'An HTML integrity report is generated immediately after migration. Use it as the definitive go/no-go for service cutover — minimizing switchover time.',f4g:'Instant cutover decision',
     f5t:'Scheduled migration',f5d:'Daily, weekly, monthly, or Cron schedules for fully automated recurring migrations.',f5g:'Pro · Enterprise',
     f6t:'Pause & resume / Error tracking',f6d:'Stop anytime and resume from where you left off. Completed folders are skipped. All errors logged per file and downloadable.',f6g:'Full control',
-    f7t:'Storage intelligence (low CPU)',f7d:'Runs at lowest CPU priority in the background — zero impact on running services. Analyzes storage before and after migration and instantly flags anomalies.',f7g:'Enterprise · Zero-impact analysis',
-    f8t:'Scheduled migration & backup',f8d:'Daily, weekly, monthly or Cron schedules automate recurring migrations and backups. Protect your data with scheduled backups — no manual intervention.',f8g:'Pro · Enterprise',
     arch_tag:'Architecture',arch_h2:'Any environment.<br>Any combination.',arch_desc:'rsync-capable servers connect directly. Non-rsync storage handled via NFS/SMB mount. No agent required.',
     rec:'Best',m1t:'Remote → Remote',m1s:'Between rsync-capable servers · NAS',m1d:'SyncData Guard orchestrates only. rsync runs source-to-target directly — maximum throughput, petabyte-optimized.',
     src:'Source server · NAS',tgt:'Target server · NAS',ctrl:'🖥 SyncData Guard (orchestrate)',m1n:'Fastest · 100% bandwidth · Petabyte-optimized',
@@ -869,8 +960,6 @@ const D = {
     f4t:'整合性レポート & 迅速なサービス切替',f4d:'移行完了直後にファイル数・チェックサム検証結果をHTMLレポートとして出力。検証結果を根拠にサービス切替タイミングを即決できます。',f4g:'即時切替判断',
     f5t:'スケジュール移行 & バックアップ',f5d:'日次・週次・月次・Cronスケジュールで定期移行・バックアップを自動化します。大切なデータを、手動作業なしで守ります。',f5g:'Pro · Enterprise',
     f6t:'一時停止 & 再開 / エラー追跡',f6d:'いつでも中断・再開できます。完了済みフォルダは自動スキップ。エラーログをファイル単位で記録・ダウンロード可能。',f6g:'完全な制御',
-    f7t:'ストレージ分析（CPU最小負荷）',f7d:'最低CPU優先度のバックグラウンドで実行し、稼働中サービスへの影響はゼロ。移行前後のファイル数・容量比較、スナップショット増減追跡で異常を即時検知。',f7g:'Enterprise · 無停止分析',
-    f8t:'スケジュール移行 & バックアップ',f8d:'日次・週次・月次・Cronスケジュールで定期移行・バックアップを自動化。大切なデータをデイリー・週末バックアップで安全に守ります。',f8g:'Pro · Enterprise',
     arch_tag:'アーキテクチャ',arch_h2:'あらゆる環境の<br>組み合わせに対応。',arch_desc:'rsync対応サーバー·NASは直接接続、非対応はNFS/SMBマウントで解決。エージェントインストール不要。',
     rec:'推奨',m1t:'リモート → リモート',m1s:'rsync対応サーバー·NAS間',m1d:'SyncData Guardは制御のみ担当。rsyncがソースから直接ターゲットへ転送。ネットワーク効率最大、ペタバイト最適。',
     src:'ソースサーバー·NAS',tgt:'ターゲットサーバー·NAS',ctrl:'🖥 SyncData Guard (制御)',m1n:'最速 · 帯域幅100% · ペタバイト最適',
