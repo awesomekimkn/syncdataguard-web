@@ -204,7 +204,7 @@ h2{font-family:var(--font-display);font-size:40px;font-weight:800;line-height:1.
 .pc-price{font-family:var(--font-display);font-size:30px;font-weight:800;margin-bottom:3px}
 .pc-price span{font-size:13px;font-weight:400;color:var(--muted)}
 .pc-disc{display:inline-block;background:rgba(0,229,160,.12);color:var(--mint);font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;margin-bottom:7px}
-.pc-maint{font-size:11px;color:var(--muted);margin-bottom:20px}
+.pc-maint{display:none}
 .pc-div{height:1px;background:var(--border);margin-bottom:18px}
 .pf{display:flex;align-items:flex-start;gap:8px;font-size:12px;margin-bottom:9px;line-height:1.5}
 .pf .y{color:var(--mint);flex-shrink:0;margin-top:1px}
@@ -733,7 +733,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
   <div class="wrap">
     <div class="sec-tag" data-i18n="price_tag">가격</div>
     <h2 data-i18n="price_h2">한 번 구매,<br>영구 사용.</h2>
-    <p class="sec-desc" data-i18n="price_desc">1카피 영구 라이선스. 유지보수(업데이트·지원)는 선택적으로 연장하실 수 있습니다.</p>
+    <p class="sec-desc" data-i18n="price_desc">1카피 영구 라이선스. 한 번 구매하면 영구 사용하실 수 있습니다.</p>
     <div class="price-grid">
       <div class="pc">
         <div class="pc-name">Basic</div>
@@ -786,7 +786,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <button onclick="openCheckout('pri_01ktbfvsdzw15kj08r2tthmg6s')" class="pbtn pg" data-i18n="btn3" style="cursor:pointer;border:none;width:100%">구매하기 →</button>
       </div>
     </div>
-    <div class="price-note" data-i18n="price_note">서버 1대 기준 · 추가 서버 기본 가격의 50% · 7일 무료 체험 · 신용카드 불필요</div>
+    <div class="price-note" data-i18n="price_note">1 server per license · Additional servers at 50% · 7-day free trial · No credit card required</div>
   </div>
 </section>
 
@@ -849,11 +849,11 @@ const D = {
     pred_p:'매 이관마다 변경분(delta)이 줄어들면서 최종 이관 소요 시간이 단축됩니다. 이력 기반 예측으로 312TB 규모도 최종 이관은 약 1시간 — 서비스 중단 시간을 최소화합니다.',
     pp1:'작업별 속도 · 시간 · 파일 수 자동 기록',pp2:'다음 이관 완료 예상 시간 자동 계산',pp3:'정합성 리포트로 즉각적인 서비스 전환 결정',pp4:'경영진 보고 · 서비스 점검 일정 수립 근거',
     pred_box_title:'📊 이관 예측',pb1k:'이관 데이터',pb2k:'평균 속도',pb3k:'이력 기준',pb3v:'3회',pb4k:'최종 이관 예상',pb4v:'약 1시간',pb4v2:'(delta 동기화 기준)',pred_conf:'신뢰도 94%',
-    price_tag:'가격',price_h2:'한 번 구매,<br>영구 사용.',price_desc:'1카피 영구 라이선스. 유지보수는 선택적으로 연장하실 수 있습니다.',
-    pd1:'소규모 팀의 간단한 이관에 적합합니다.',po1:'590,000원',pp1p:'490,000원<span>/라이선스</span>',disc:'17% 할인',pm1:'업데이트 · 기술 지원은 별도 문의',
-    pd2:'정기 이관이 필요한 IT 운영팀에 최적입니다.',po2:'2,400,000원',pp2p:'1,990,000원<span>/라이선스</span>',pm2:'업데이트 · 기술 지원은 별도 문의',
-    pd3:'대용량 인프라, 보안 환경, 기업, 공공기관에 적합합니다.',po3:'12,000,000원',pp3p:'9,990,000원<span>/라이선스</span>',pm3:'업데이트 · 기술 지원은 별도 문의',
-    pps:'/라이선스',popular:'인기',
+    price_tag:'가격',price_h2:'한 번 구매,<br>영구 사용.',price_desc:'1카피 영구 라이선스. 한 번 구매하면 영구 사용하실 수 있습니다.',
+    pd1:'소규모 팀의 간단한 이관에 적합합니다.',po1:'$590',pp1p:'$490<span>/license</span>',disc:'17% 할인',pm1:'업데이트 · 기술 지원은 별도 문의',
+    pd2:'정기 이관이 필요한 IT 운영팀에 최적입니다.',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'업데이트 · 기술 지원은 별도 문의',
+    pd3:'대용량 인프라, 보안 환경, 기업, 공공기관에 적합합니다.',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'업데이트 · 기술 지원은 별도 문의',
+    pps:'/license',popular:'인기',
     pf_all:'모든 이관 방식 (로컬↔원격)',pf_mon:'실시간 모니터링',pf_ver:'정합성 검증 & 리포트',pf_p1:'병렬 1 스트림',pf_sch:'예약 이관',pf_chk:'청크 병렬 이관',pf_ana:'스토리지 분석',
     pf_bas:'Basic 모든 기능',pf_schf:'예약 이관 (일간·주간·Cron)',pf_bw:'대역폭 제어',pf_p4:'병렬 최대 4 스트림',
     pf_pro:'Pro 모든 기능',pf_chkf:'청크 병렬 이관 (무제한)',pf_p16:'병렬 최대 16 스트림',pf_anaf:'스토리지 분석 · 이력 관리',pf_off:'망분리 · 오프라인 설치',pf_sup:'전담 기술 지원',
@@ -870,7 +870,7 @@ const D = {
     rpt_p2t:'서비스 전환 즉시 결정',rpt_p2d:'정합성 검증 결과를 근거로 서비스 전환 여부를 즉시 결정할 수 있습니다.',
     rpt_p3t:'단일 HTML 파일',rpt_p3d:'외부 의존성 없는 단일 HTML 파일로 보관·공유·보고서 제출에 바로 활용합니다.',
     foot_contact:'이메일 문의',
-    price_note:'서버 1대 기준 · 추가 서버 기본 가격의 50% · 7일 무료 체험 · 신용카드 불필요 · 유지보수 및 기술 문의는 별도 문의',
+    price_note:'1 server per license · Additional servers at 50% · 7-day free trial · No credit card required',
   },
   en:{
     nav_dl:'Download',
@@ -916,7 +916,7 @@ const D = {
     pred_p:'Each migration run reduces the delta. With history-based prediction, even 312 TB finishes in ~1 hour on final cutover — minimizing service downtime to an absolute minimum.',
     pp1:'Speed · duration · file count logged per job',pp2:'Auto-calculated ETA for next migration',pp3:'Integrity report enables immediate cutover decision',pp4:'Evidence base for management reports & scheduling',
     pred_box_title:'📊 Migration prediction',pb1k:'Data size',pb2k:'Avg speed',pb3k:'Based on',pb3v:'3 prior jobs',pb4k:'Final migration',pb4v:'~1 hour',pb4v2:'(delta sync only)',pred_conf:'94% confidence',
-    price_tag:'Pricing',price_h2:'One-time purchase.<br>Yours forever.',price_desc:'Perpetual license per copy. Optional annual maintenance covers updates and priority support.',
+    price_tag:'Pricing',price_h2:'One-time purchase.<br>Yours forever.',price_desc:'Perpetual license per copy. One-time purchase, yours forever.',
     pd1:'For small teams with straightforward migration needs.',po1:'$590',pp1p:'$490<span>/license</span>',disc:'17% OFF',pm1:'Updates & technical support: contact us',
     pd2:'For IT teams with recurring migration workflows.',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'Updates & technical support: contact us',
     pd3:'For large-scale infrastructure, security-sensitive environments, enterprises and public institutions.',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'Updates & technical support: contact us',
