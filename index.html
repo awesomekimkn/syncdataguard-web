@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SyncData Guard — 대용량 파일 이관 플랫폼</title>
+<title>SyncData Guard — Server Data Migration Tool | Linux File Transfer & rsync Web UI</title>
 <meta name="description" content="어떤 서버도, 어떤 NAS도, 어떤 규모도. 파일 기반 대용량 데이터 이관의 새로운 기준.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -281,6 +281,143 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       items: [{ priceId: priceId, quantity: 1 }],
     });
   }
+</script>
+
+<!-- ── Primary SEO ── -->
+<meta name="title" content="SyncData Guard — Server Data Migration Tool | File Transfer & Backup Solution">
+<meta name="description" content="SyncData Guard is a web-based server data migration tool. Migrate large files between Linux servers, NAS, and cloud storage with rsync. Supports CentOS, Ubuntu, Debian, RHEL. One-time license.">
+<meta name="keywords" content="server migration tool, data migration software, linux file transfer, rsync web ui, server data migration, large file migration, NAS migration, CentOS migration, Ubuntu migration, 서버 이관, 데이터 이관, 파일 이관 툴, 서버 마이그레이션, 대용량 파일 이관, NAS 이관, rsync 웹 UI, 서버 데이터 이관 솔루션, データ移行ツール, サーバー移行, ファイル移行, Linux移行ツール">
+<meta name="author" content="CloudFactory">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.syncdataguard.com/">
+
+<!-- ── Open Graph (SNS/Slack 공유) ── -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.syncdataguard.com/">
+<meta property="og:title" content="SyncData Guard — Server Data Migration Tool">
+<meta property="og:description" content="Web-based server data migration tool. Migrate large files between Linux servers, NAS, and storage systems. Supports rsync, NFS, SMB. One-time license, offline install supported.">
+<meta property="og:image" content="https://www.syncdataguard.com/og-image.png">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:site_name" content="SyncData Guard">
+
+<!-- ── Twitter Card ── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SyncData Guard — Server Data Migration Tool">
+<meta name="twitter:description" content="Web-based server data migration tool. Migrate large files between Linux servers and NAS with rsync. One-time license.">
+<meta name="twitter:image" content="https://www.syncdataguard.com/og-image.png">
+
+<!-- ── JSON-LD 구조화 데이터 ── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "SyncData Guard",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Linux (CentOS 7+, Ubuntu 18.04+, Debian 10+, RHEL 7+)",
+  "description": "Web-based server data migration tool for large-scale file transfers between Linux servers, NAS, and storage systems using rsync. Supports offline installation, NFS/SMB mount, and real-time progress monitoring.",
+  "url": "https://www.syncdataguard.com",
+  "downloadUrl": "https://github.com/awesomekimkn/syncdataguard-web/releases/latest/download/rsync-migrator-linux-x64.zip",
+  "softwareVersion": "1.98",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Basic License",
+      "price": "490",
+      "priceCurrency": "USD",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "490",
+        "priceCurrency": "USD",
+        "unitText": "perpetual license"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro License",
+      "price": "1990",
+      "priceCurrency": "USD",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "1990",
+        "priceCurrency": "USD",
+        "unitText": "perpetual license"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Enterprise License",
+      "price": "9990",
+      "priceCurrency": "USD",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "9990",
+        "priceCurrency": "USD",
+        "unitText": "perpetual license"
+      }
+    }
+  ],
+  "featureList": [
+    "Web-based UI (no CLI required)",
+    "Large file migration with rsync",
+    "NFS/SMB mount support",
+    "Real-time progress monitoring",
+    "HTML migration report",
+    "Storage analysis",
+    "Offline installation support",
+    "CentOS 7 support",
+    "Scheduled migration",
+    "File split migration (Enterprise)"
+  ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "CloudFactory",
+    "url": "https://www.syncdataguard.com"
+  }
+}
+</script>
+
+<!-- ── FAQ 구조화 데이터 ── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What operating systems does SyncData Guard support?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "SyncData Guard supports CentOS 7+, Ubuntu 18.04+, Debian 10+, RHEL 7+, Rocky Linux, and AlmaLinux on x86_64 architecture."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does SyncData Guard work offline?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. SyncData Guard supports fully offline installation, making it ideal for air-gapped and network-isolated environments such as government and financial institutions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the license perpetual?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. SyncData Guard uses a one-time perpetual license model. There are no recurring subscription fees."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can SyncData Guard migrate data between different server types?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. SyncData Guard supports direct rsync connections between Linux servers and NFS/SMB mounts for NAS devices and other storage systems."
+      }
+    }
+  ]
+}
 </script>
 </head>
 <body>
