@@ -882,7 +882,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <div class="pc-div"></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_all">모든 이관 방식 (로컬↔원격)</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_mon">실시간 모니터링</span></div>
-        <div class="pf"><span class="n">✕</span><span class="t" data-i18n="pf_ver">정합성 검증 & 리포트</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_ver">정합성 검증</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_p1">병렬 1 스트림</span></div>
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_sch">예약 이관</span></div>
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_chk">청크 병렬 이관</span></div>
@@ -902,6 +902,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_schf">예약 이관 (일간·주간·Cron)</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_bw">대역폭 제어</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_p4">병렬 최대 4 스트림</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_rep">통합 리포트 지원</span></div>
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_chk">청크 병렬 이관</span></div>
         <div class="pf"><span class="n">–</span><span class="t" data-i18n="pf_ana">스토리지 분석</span></div>
         <button onclick="openCheckout('pri_01ktbftfb7m5q5dp1tzz2fzzcf')" class="pbtn pm" data-i18n="btn2" style="cursor:pointer;border:none;width:100%">구매하기 →</button>
@@ -1034,8 +1035,8 @@ const D = {
     pd2:'정기 이관이 필요한 IT 운영팀에 최적입니다.',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'업데이트 · 기술 지원은 별도 문의',
     pd3:'대용량 인프라, 보안 환경, 기업, 공공기관에 적합합니다. TB급 이관 시 다중 서버 운용 가능 (추가 인스턴스 문의).',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'업데이트 · 기술 지원은 별도 문의',
     pps:'/license',popular:'인기',
-    pf_all:'모든 이관 방식 (로컬↔원격)',pf_mon:'실시간 모니터링',pf_ver:'정합성 검증 & 리포트',pf_p1:'병렬 1 스트림',pf_sch:'예약 이관',pf_chk:'청크 병렬 이관',pf_ana:'스토리지 분석',
-    pf_bas:'Basic 모든 기능',pf_schf:'예약 이관 (일간·주간·Cron)',pf_bw:'대역폭 제어',pf_p4:'병렬 최대 4 스트림',
+    pf_all:'모든 이관 방식 (로컬↔원격)',pf_mon:'실시간 모니터링',pf_ver:'정합성 검증',pf_p1:'병렬 1 스트림',pf_sch:'예약 이관',pf_chk:'청크 병렬 이관',pf_ana:'스토리지 분석',
+    pf_bas:'Basic 모든 기능',pf_schf:'예약 이관 (일간·주간·Cron)',pf_bw:'대역폭 제어',pf_p4:'병렬 최대 4 스트림',pf_rep:'통합 리포트 지원',
     pf_pro:'Pro 모든 기능',pf_chkf:'청크 병렬 이관 (무제한)',pf_p16:'병렬 최대 16 스트림',pf_anaf:'스토리지 분석 · 이력 관리',pf_off:'망분리 · 오프라인 설치',pf_sup:'전담 기술 지원',
     btn1:'구매하기 →',btn2:'구매하기 →',btn3:'구매하기 →',
     pipe_tag:'원 파이프라인',pipe_h3:'스토리지 분석부터 리포트까지<br>단번에 끝납니다.',
@@ -1110,8 +1111,8 @@ const D = {
     pd2:'For IT teams with recurring migration workflows.',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'Updates & technical support: contact us',
     pd3:'For large-scale infrastructure, security-sensitive environments, enterprises and public institutions. Multi-server deployment available for TB-scale migrations (contact us for additional instances).',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'Updates & technical support: contact us',
     pps:'/license',popular:'Most popular',
-    pf_all:'All transfer modes (local ↔ remote)',pf_mon:'Real-time monitoring',pf_ver:'Integrity verification & report',pf_p1:'1 parallel stream',pf_sch:'Scheduled migration',pf_chk:'Chunk parallel transfer',pf_ana:'Storage analytics',
-    pf_bas:'Everything in Basic',pf_schf:'Scheduled migration (daily/weekly/Cron)',pf_bw:'Bandwidth control',pf_p4:'Up to 4 parallel streams',
+    pf_all:'All transfer modes (local ↔ remote)',pf_mon:'Real-time monitoring',pf_ver:'Integrity verification',pf_p1:'1 parallel stream',pf_sch:'Scheduled migration',pf_chk:'Chunk parallel transfer',pf_ana:'Storage analytics',
+    pf_bas:'Everything in Basic',pf_schf:'Scheduled migration (daily/weekly/Cron)',pf_bw:'Bandwidth control',pf_p4:'Up to 4 parallel streams',pf_rep:'Integrated report',
     pf_pro:'Everything in Pro',pf_chkf:'Chunk parallel transfer (unlimited)',pf_p16:'Up to 16 parallel streams',pf_anaf:'Storage analytics · history tracking',pf_off:'Air-gapped · offline install',pf_sup:'Dedicated support',
     btn1:'Contact sales',btn2:'Contact sales',btn3:'Contact sales →',
     pipe_tag:'One pipeline',pipe_h3:'Storage analysis to final report.<br>All in one workflow.',
@@ -1168,8 +1169,8 @@ const D = {
     pd2:'定期移行が必要なITチームに最適です。',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'アップデート・技術サポートは別途お問い合わせ',
     pd3:'大規模インフラ・セキュリティ環境・官公庁に適しています。TB規模の移行には複数サーバー運用が可能です（追加インスタンスはお問い合わせください）。',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'アップデート・技術サポートは別途お問い合わせ',
     pps:'/license',popular:'人気',
-    pf_all:'全転送方式（ローカル↔リモート）',pf_mon:'リアルタイム監視',pf_ver:'整合性検証 & レポート',pf_p1:'並列1ストリーム',pf_sch:'スケジュール移行',pf_chk:'チャンク並列転送',pf_ana:'ストレージ分析',
-    pf_bas:'Basicの全機能',pf_schf:'スケジュール移行（日次·週次·Cron）',pf_bw:'帯域幅制御',pf_p4:'最大4並列ストリーム',
+    pf_all:'全転送方式（ローカル↔リモート）',pf_mon:'リアルタイム監視',pf_ver:'整合性検証',pf_p1:'並列1ストリーム',pf_sch:'スケジュール移行',pf_chk:'チャンク並列転送',pf_ana:'ストレージ分析',
+    pf_bas:'Basicの全機能',pf_schf:'スケジュール移行（日次·週次·Cron）',pf_bw:'帯域幅制御',pf_p4:'最大4並列ストリーム',pf_rep:'統合レポート対応',
     pf_pro:'Proの全機能',pf_chkf:'チャンク並列転送（無制限）',pf_p16:'最大16並列ストリーム',pf_anaf:'ストレージ分析 · 履歴管理',pf_off:'エアギャップ · オフラインインストール',pf_sup:'専任サポート',
     btn1:'お問い合わせ',btn2:'お問い合わせ',btn3:'導入のお問い合わせ →',
     pipe_tag:'ワンパイプライン',pipe_h3:'ストレージ分析からレポートまで<br>一気に完結します。',
