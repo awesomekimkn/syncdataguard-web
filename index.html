@@ -935,10 +935,44 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <a href="#arch" data-i18n="nav_arch">아키텍처</a>
       <a href="#report" data-i18n="nav_report">리포트</a><a href="https://syncdataguard.gitbook.io/syncdataguard-docs/" target="_blank" data-i18n="nav_docs">Docs</a><a href="#download" data-i18n="nav_dl">다운로드</a><a href="#pricing" data-i18n="nav_price">가격</a>
       <a href="mailto:support@syncdataguard.com" data-i18n="foot_contact">이메일 문의</a>
+      <a href="#license-policy" data-i18n="foot_license_policy" onclick="document.getElementById('license-policy-modal').style.display='flex'">라이선스 정책</a>
     </div>
   </div>
   <div class="foot-copy">© 2026 CloudFactory. All rights reserved.</div>
 </footer>
+
+<!-- ── 라이선스 정책 모달 ── -->
+<div id="license-policy-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:36px;position:relative">
+    <button onclick="document.getElementById('license-policy-modal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>
+    <h2 style="font-size:20px;font-weight:800;color:var(--white);margin:0 0 20px" data-i18n="lp_title">라이선스 정책</h2>
+    <div style="font-size:13px;color:var(--muted);line-height:2">
+      <p style="font-weight:700;color:var(--white);margin-bottom:8px" data-i18n="lp_permitted_title">✅ 허용 사항</p>
+      <ul style="margin:0 0 20px;padding-left:20px" data-i18n="lp_permitted">
+        <li>1개 라이선스 → 1대 서버에 설치 및 사용</li>
+        <li>라이선스 등록 서버의 교체 (기존 서버 삭제 후 신규 서버에 등록)</li>
+        <li>내부 업무 목적의 사용</li>
+      </ul>
+      <p style="font-weight:700;color:var(--white);margin-bottom:8px" data-i18n="lp_prohibited_title">❌ 금지 사항</p>
+      <ul style="margin:0 0 20px;padding-left:20px" data-i18n="lp_prohibited">
+        <li>1개 라이선스를 2대 이상의 서버에 동시 설치</li>
+        <li>라이선스 키의 제3자 양도, 공유, 재판매</li>
+        <li>소프트웨어 역공학(리버스 엔지니어링), 디컴파일, 수정</li>
+        <li>라이선스 우회 또는 변조 시도</li>
+        <li>불법 복제본의 배포 또는 사용</li>
+      </ul>
+      <p style="font-weight:700;color:var(--white);margin-bottom:8px" data-i18n="lp_enforcement_title">⚠️ 위반 시 조치</p>
+      <ul style="margin:0 0 20px;padding-left:20px" data-i18n="lp_enforcement">
+        <li>라이선스 즉시 무효화 및 접근 차단</li>
+        <li>환불 불가</li>
+        <li>필요 시 법적 조치 진행</li>
+      </ul>
+      <p style="font-weight:700;color:var(--white);margin-bottom:8px" data-i18n="lp_multi_title">🖥️ 다중 서버 환경</p>
+      <p data-i18n="lp_multi">TB급 대용량 이관 등 다중 서버 운용이 필요한 경우 추가 인스턴스 라이선스를 제공합니다. <a href="mailto:support@syncdataguard.com" style="color:var(--mint)">문의하세요 →</a></p>
+      <p style="margin-top:20px;font-size:12px;color:var(--muted)" data-i18n="lp_footer">본 정책은 SyncData Guard 소프트웨어 구매 시 동의한 것으로 간주합니다.<br>© 2026 CloudFactory. All rights reserved.</p>
+    </div>
+  </div>
+</div>
 
 <script>
 const D = {
@@ -953,6 +987,14 @@ const D = {
     dl_size_linux:'v1.98 · ~11MB',
     dl_s1:'신용카드 불필요',dl_s2:'7일 무료 체험',dl_s3:'오프라인 설치 지원',dl_s4:'설치 후 즉시 사용',
     dl_install_guide:'설치 방법:',
+    foot_license_policy:'라이선스 정책',
+    lp_title:'라이선스 정책',
+    lp_permitted_title:'허용 사항',
+    lp_prohibited_title:'금지 사항',
+    lp_enforcement_title:'위반 시 조치',
+    lp_multi_title:'다중 서버 환경',
+    lp_multi:'TB급 대용량 이관 등 다중 서버 운용이 필요한 경우 추가 인스턴스 라이선스를 제공합니다.',
+    lp_footer:'본 정책은 SyncData Guard 소프트웨어 구매 시 동의한 것으로 간주합니다.',
     nav_why:'왜 SyncDataGuard?',nav_feat:'기능',nav_arch:'아키텍처',nav_price:'가격',nav_contact:'문의',nav_report:'리포트',nav_cta:'무료 체험',
     hero_tag:'파일 기반 대용량 데이터 이관',
     hero_h1:'어떤 서버도.<br>어떤 규모도.<br><em>안전하고 빠르게 해결됩니다.</em>',
@@ -990,7 +1032,7 @@ const D = {
     price_tag:'가격',price_h2:'한 번 구매,<br>영구 사용.',price_desc:'1카피 영구 라이선스. 한 번 구매하면 영구 사용하실 수 있습니다.',
     pd1:'소규모 팀의 간단한 이관에 적합합니다.',po1:'$590',pp1p:'$490<span>/license</span>',disc:'17% 할인',pm1:'업데이트 · 기술 지원은 별도 문의',
     pd2:'정기 이관이 필요한 IT 운영팀에 최적입니다.',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'업데이트 · 기술 지원은 별도 문의',
-    pd3:'대용량 인프라, 보안 환경, 기업, 공공기관에 적합합니다.',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'업데이트 · 기술 지원은 별도 문의',
+    pd3:'대용량 인프라, 보안 환경, 기업, 공공기관에 적합합니다. TB급 이관 시 다중 서버 운용 가능 (추가 인스턴스 문의).',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'업데이트 · 기술 지원은 별도 문의',
     pps:'/license',popular:'인기',
     pf_all:'모든 이관 방식 (로컬↔원격)',pf_mon:'실시간 모니터링',pf_ver:'정합성 검증 & 리포트',pf_p1:'병렬 1 스트림',pf_sch:'예약 이관',pf_chk:'청크 병렬 이관',pf_ana:'스토리지 분석',
     pf_bas:'Basic 모든 기능',pf_schf:'예약 이관 (일간·주간·Cron)',pf_bw:'대역폭 제어',pf_p4:'병렬 최대 4 스트림',
@@ -1021,6 +1063,14 @@ const D = {
     dl_size_linux:'v1.98 · ~11MB',
     dl_s1:'No credit card',dl_s2:'7-day free trial',dl_s3:'Offline install supported',dl_s4:'Ready immediately after install',
     dl_install_guide:'Install:',
+    foot_license_policy:'License Policy',
+    lp_title:'License Policy',
+    lp_permitted_title:'Permitted',
+    lp_prohibited_title:'Prohibited',
+    lp_enforcement_title:'Violations',
+    lp_multi_title:'Multi-Server Environment',
+    lp_multi:'For TB-scale migrations requiring multiple server deployment, additional instance licenses are available.',
+    lp_footer:'By purchasing SyncData Guard, you agree to this license policy.',
     nav_why:'Why SyncDataGuard?',nav_feat:'Features',nav_arch:'Architecture',nav_price:'Pricing',nav_contact:'Contact',nav_report:'Report',nav_cta:'Free trial',
     hero_tag:'File-based large-scale data migration',
     hero_h1:'Any server.<br>Any scale.<br><em>Done.</em>',
@@ -1058,7 +1108,7 @@ const D = {
     price_tag:'Pricing',price_h2:'One-time purchase.<br>Yours forever.',price_desc:'Perpetual license per copy. One-time purchase, yours forever.',
     pd1:'For small teams with straightforward migration needs.',po1:'$590',pp1p:'$490<span>/license</span>',disc:'17% OFF',pm1:'Updates & technical support: contact us',
     pd2:'For IT teams with recurring migration workflows.',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'Updates & technical support: contact us',
-    pd3:'For large-scale infrastructure, security-sensitive environments, enterprises and public institutions.',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'Updates & technical support: contact us',
+    pd3:'For large-scale infrastructure, security-sensitive environments, enterprises and public institutions. Multi-server deployment available for TB-scale migrations (contact us for additional instances).',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'Updates & technical support: contact us',
     pps:'/license',popular:'Most popular',
     pf_all:'All transfer modes (local ↔ remote)',pf_mon:'Real-time monitoring',pf_ver:'Integrity verification & report',pf_p1:'1 parallel stream',pf_sch:'Scheduled migration',pf_chk:'Chunk parallel transfer',pf_ana:'Storage analytics',
     pf_bas:'Everything in Basic',pf_schf:'Scheduled migration (daily/weekly/Cron)',pf_bw:'Bandwidth control',pf_p4:'Up to 4 parallel streams',
@@ -1116,7 +1166,7 @@ const D = {
     price_tag:'料金',price_h2:'一度の購入で<br>永久使用。',price_desc:'1コピー永久ライセンス。メンテナンス（アップデート・サポート）は任意で更新いただけます。',
     pd1:'小規模チームのシンプルな移行に適しています。',po1:'$590',pp1p:'$490<span>/license</span>',disc:'17% OFF',pm1:'アップデート・技術サポートは別途お問い合わせ',
     pd2:'定期移行が必要なITチームに最適です。',po2:'$2,390',pp2p:'$1,990<span>/license</span>',pm2:'アップデート・技術サポートは別途お問い合わせ',
-    pd3:'大規模インフラ・セキュリティ環境・官公庁に適しています。',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'アップデート・技術サポートは別途お問い合わせ',
+    pd3:'大規模インフラ・セキュリティ環境・官公庁に適しています。TB規模の移行には複数サーバー運用が可能です（追加インスタンスはお問い合わせください）。',po3:'$11,990',pp3p:'$9,990<span>/license</span>',pm3:'アップデート・技術サポートは別途お問い合わせ',
     pps:'/license',popular:'人気',
     pf_all:'全転送方式（ローカル↔リモート）',pf_mon:'リアルタイム監視',pf_ver:'整合性検証 & レポート',pf_p1:'並列1ストリーム',pf_sch:'スケジュール移行',pf_chk:'チャンク並列転送',pf_ana:'ストレージ分析',
     pf_bas:'Basicの全機能',pf_schf:'スケジュール移行（日次·週次·Cron）',pf_bw:'帯域幅制御',pf_p4:'最大4並列ストリーム',
