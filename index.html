@@ -859,7 +859,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <div class="dl-card-icon">🐧</div>
         <div class="dl-card-title">Linux (x86_64)</div>
         <div class="dl-card-desc" data-i18n="dl_linux_desc">CentOS 7+, Ubuntu 18.04+<br>Debian 10+, RHEL 7+</div>
-        <a href="https://github.com/awesomekimkn/syncdataguard-web/releases/latest/download/rsync-migrator-linux-x64.zip" class="dl-btn">
+        <a href="https://github.com/awesomekimkn/syncdataguard-web/releases/latest/download/rsync-migrator-linux-x64.zip" class="dl-btn" onclick="trackDownload()">
           ⬇ <span data-i18n="dl_download">다운로드</span>
         </a>
         <div class="dl-note" data-i18n="dl_size_linux">v1.98 · ~11MB</div>
@@ -948,7 +948,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <a href="#arch" data-i18n="nav_arch">아키텍처</a>
       <a href="#report" data-i18n="nav_report">리포트</a><a href="https://syncdataguard.gitbook.io/syncdataguard-docs/" target="_blank" data-i18n="nav_docs">Docs</a><a href="#download" data-i18n="nav_dl">다운로드</a><a href="#pricing" data-i18n="nav_price">가격</a>
       <a href="mailto:support@syncdataguard.com" data-i18n="foot_contact">이메일 문의</a>
-      <a href="#" data-i18n="foot_license_policy" onclick="event.preventDefault();document.getElementById('license-policy-modal').style.display='flex'">라이선스 정책</a>
+      <a href="#" data-i18n="foot_license_policy" onclick="event.preventDefault();openLicensePolicy()">라이선스 정책</a>
       <a href="#" data-i18n="foot_terms" onclick="event.preventDefault();openPolicy('terms')">서비스 약관</a>
       <a href="#" data-i18n="foot_privacy" onclick="event.preventDefault();openPolicy('privacy')">개인정보 보호정책</a>
       <a href="#" data-i18n="foot_refund" onclick="event.preventDefault();openPolicy('refund')">환불 정책</a>
@@ -961,32 +961,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
 <div id="license-policy-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)this.style.display='none'">
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:36px;position:relative">
     <button onclick="document.getElementById('license-policy-modal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>
-    <h2 style="font-size:20px;font-weight:800;color:var(--white);margin:0 0 20px" data-i18n="lp_title">라이선스 정책</h2>
-    <div style="font-size:13px;color:var(--muted);line-height:2">
-      <p style="font-weight:700;color:var(--white);margin-bottom:8px" data-i18n="lp_permitted_title">✅ 허용 사항</p>
-      <ul style="margin:0 0 20px;padding-left:20px" data-i18n="lp_permitted">
-        <li>1개 라이선스 → 1대 서버에 설치 및 사용</li>
-        <li>라이선스 등록 서버의 교체 (기존 서버 삭제 후 신규 서버에 등록)</li>
-        <li>내부 업무 목적의 사용</li>
-      </ul>
-      <p style="font-weight:700;color:var(--white);margin-bottom:8px" data-i18n="lp_prohibited_title">❌ 금지 사항</p>
-      <ul style="margin:0 0 20px;padding-left:20px" data-i18n="lp_prohibited">
-        <li>1개 라이선스를 2대 이상의 서버에 동시 설치</li>
-        <li>라이선스 키의 제3자 양도, 공유, 재판매</li>
-        <li>소프트웨어 역공학(리버스 엔지니어링), 디컴파일, 수정</li>
-        <li>라이선스 우회 또는 변조 시도</li>
-        <li>불법 복제본의 배포 또는 사용</li>
-      </ul>
-      <p style="font-weight:700;color:var(--white);margin-bottom:8px" data-i18n="lp_enforcement_title">⚠️ 위반 시 조치</p>
-      <ul style="margin:0 0 20px;padding-left:20px" data-i18n="lp_enforcement">
-        <li>라이선스 즉시 무효화 및 접근 차단</li>
-        <li>환불 불가</li>
-        <li>필요 시 법적 조치 진행</li>
-      </ul>
-      <p style="font-weight:700;color:var(--white);margin-bottom:8px" data-i18n="lp_multi_title">🖥️ 다중 서버 환경</p>
-      <p data-i18n="lp_multi">TB급 대용량 이관 등 다중 서버 운용이 필요한 경우 추가 인스턴스 라이선스를 제공합니다. <a href="mailto:support@syncdataguard.com" style="color:var(--mint)">문의하세요 →</a></p>
-      <p style="margin-top:20px;font-size:12px;color:var(--muted)" data-i18n="lp_footer">본 정책은 SyncData Guard 소프트웨어 구매 시 동의한 것으로 간주합니다.<br>© 2026 CloudFactory. All rights reserved.</p>
-    </div>
+    <div id="lp-content"></div>
   </div>
 </div>
 
@@ -1465,6 +1440,84 @@ function openPolicy(type) {
 
 function closePolicy() {
   document.getElementById('policy-modal').classList.remove('open');
+}
+
+
+const LP = {
+  ko: {
+    title: '라이선스 정책',
+    permitted_title: '✅ 허용 사항',
+    permitted: ['1개 라이선스 → 1대 서버에 설치 및 사용', '라이선스 등록 서버의 교체 (기존 서버 삭제 후 신규 서버에 등록)', '내부 업무 목적의 사용'],
+    prohibited_title: '❌ 금지 사항',
+    prohibited: ['1개 라이선스를 2대 이상의 서버에 동시 설치', '라이선스 키의 제3자 양도, 공유, 재판매', '소프트웨어 역공학(리버스 엔지니어링), 디컴파일, 수정', '라이선스 우회 또는 변조 시도', '불법 복제본의 배포 또는 사용'],
+    enforcement_title: '⚠️ 위반 시 조치',
+    enforcement: ['라이선스 즉시 무효화 및 접근 차단', '환불 불가', '필요 시 법적 조치 진행'],
+    multi_title: '🖥️ 다중 서버 환경',
+    multi: 'TB급 대용량 이관 등 다중 서버 운용이 필요한 경우 추가 인스턴스 라이선스를 제공합니다.',
+    contact: '문의하세요 →',
+    footer: '본 정책은 SyncData Guard 소프트웨어 구매 시 동의한 것으로 간주합니다.<br>© 2026 CloudFactory. All rights reserved.'
+  },
+  en: {
+    title: 'License Policy',
+    permitted_title: '✅ Permitted',
+    permitted: ['1 license → install and use on 1 server', 'Replacing the registered server (unregister old, register new)', 'Use for internal business purposes'],
+    prohibited_title: '❌ Prohibited',
+    prohibited: ['Installing 1 license on 2 or more servers simultaneously', 'Transferring, sharing, or reselling the license key to third parties', 'Reverse engineering, decompiling, or modifying the software', 'Attempting to bypass or tamper with the license', 'Distributing or using unauthorized copies'],
+    enforcement_title: '⚠️ Violations',
+    enforcement: ['Immediate license revocation and access block', 'No refund', 'Legal action may be taken if necessary'],
+    multi_title: '🖥️ Multi-Server Environment',
+    multi: 'For TB-scale migrations requiring multiple server deployment, additional instance licenses are available.',
+    contact: 'Contact us →',
+    footer: 'By purchasing SyncData Guard, you agree to this license policy.<br>© 2026 CloudFactory. All rights reserved.'
+  },
+  ja: {
+    title: 'ライセンスポリシー',
+    permitted_title: '✅ 許可事項',
+    permitted: ['1ライセンス → 1台のサーバーへのインストールと使用', '登録サーバーの交換（旧サーバーの登録解除後、新サーバーに登録）', '社内業務目的での使用'],
+    prohibited_title: '❌ 禁止事項',
+    prohibited: ['1ライセンスを2台以上のサーバーに同時インストール', 'ライセンスキーの第三者への譲渡・共有・再販売', 'ソフトウェアのリバースエンジニアリング・逆コンパイル・改変', 'ライセンスの回避または改ざん試行', '不正コピーの配布または使用'],
+    enforcement_title: '⚠️ 違反時の対応',
+    enforcement: ['ライセンスの即時無効化とアクセスブロック', '返金不可', '必要に応じて法的措置を実施'],
+    multi_title: '🖥️ マルチサーバー環境',
+    multi: 'TB規模の移行など複数サーバー運用が必要な場合、追加インスタンスライセンスをご提供します。',
+    contact: 'お問い合わせ →',
+    footer: 'SyncData Guardのご購入により、本ポリシーに同意したものとみなします。<br>© 2026 CloudFactory. All rights reserved.'
+  }
+};
+
+function openLicensePolicy() {
+  const lang = (typeof L !== 'undefined' ? L : 'ko');
+  const p = LP[lang] || LP['ko'];
+  const liItems = (arr) => arr.map(i => `<li>${i}</li>`).join('');
+  document.getElementById('lp-content').innerHTML = `
+    <h2 style="font-size:20px;font-weight:800;color:var(--white);margin:0 0 20px">${p.title}</h2>
+    <div style="font-size:13px;color:var(--muted);line-height:2">
+      <p style="font-weight:700;color:var(--white);margin-bottom:8px">${p.permitted_title}</p>
+      <ul style="margin:0 0 20px;padding-left:20px">${liItems(p.permitted)}</ul>
+      <p style="font-weight:700;color:var(--white);margin-bottom:8px">${p.prohibited_title}</p>
+      <ul style="margin:0 0 20px;padding-left:20px">${liItems(p.prohibited)}</ul>
+      <p style="font-weight:700;color:var(--white);margin-bottom:8px">${p.enforcement_title}</p>
+      <ul style="margin:0 0 20px;padding-left:20px">${liItems(p.enforcement)}</ul>
+      <p style="font-weight:700;color:var(--white);margin-bottom:8px">${p.multi_title}</p>
+      <p>${p.multi} <a href="mailto:support@syncdataguard.com" style="color:var(--mint)">${p.contact}</a></p>
+      <p style="margin-top:20px;font-size:12px;color:var(--muted)">${p.footer}</p>
+    </div>
+  `;
+  document.getElementById('license-policy-modal').style.display = 'flex';
+}
+
+function trackDownload() {
+  try {
+    fetch('https://sdg-license-server-production.up.railway.app/track/download', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        lang: typeof L !== 'undefined' ? L : 'ko',
+        ua:   navigator.userAgent,
+        url:  location.href
+      })
+    });
+  } catch(e) {}
 }
 </script>
 </body>
