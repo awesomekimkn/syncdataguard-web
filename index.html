@@ -1455,7 +1455,7 @@ const POLICIES = {
 };
 
 function openPolicy(type) {
-  const lang = (typeof LANG !== 'undefined' ? LANG : 'ko');
+  const lang = (typeof L !== 'undefined' ? L : 'ko');
   const p = POLICIES[type][lang] || POLICIES[type]['en'];
   document.getElementById('policy-title').textContent = p.title;
   document.getElementById('policy-date').textContent = p.date;
