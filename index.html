@@ -955,9 +955,9 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <a href="#report" data-i18n="nav_report">Report</a><a href="https://syncdataguard.gitbook.io/syncdataguard-docs/" target="_blank" data-i18n="nav_docs">Docs</a><a href="#download" data-i18n="nav_dl">Download</a><a href="#pricing" data-i18n="nav_price">Pricing</a>
       <a href="mailto:support@syncdataguard.com" data-i18n="foot_contact">Contact us</a>
       <a href="#" data-i18n="foot_license_policy" onclick="event.preventDefault();openLicensePolicy()">License Policy</a>
-      <a href="#" data-i18n="foot_terms" onclick="event.preventDefault();openPolicy('terms')">Terms of Service</a>
-      <a href="#" data-i18n="foot_privacy" onclick="event.preventDefault();openPolicy('privacy')">Privacy Policy</a>
-      <a href="#" data-i18n="foot_refund" onclick="event.preventDefault();openPolicy('refund')">Refund Policy</a>
+      <a href="/terms.html" id="foot-terms-link" data-i18n="foot_terms">Terms of Service</a>
+      <a href="/privacy.html" id="foot-privacy-link" data-i18n="foot_privacy">Privacy Policy</a>
+      <a href="/refund.html" id="foot-refund-link" data-i18n="foot_refund">Refund Policy</a>
     </div>
   </div>
   <div class="foot-copy">© 2026 CloudFactory. All rights reserved.</div>
@@ -1207,6 +1207,10 @@ function setLang(lang) {
     if (d[k] !== undefined) el.innerHTML = d[k];
   });
   document.title = {ko:'SyncData Guard — 파일 기반 대용량 데이터 이관',en:'SyncData Guard — File-based large-scale data migration',ja:'SyncData Guard — ファイルベース大容量データ移行'}[lang];
+  const suffix = lang === 'en' ? '' : '-' + lang;
+  const tl = document.getElementById('foot-terms-link'); if (tl) tl.href = '/terms' + suffix + '.html';
+  const pl = document.getElementById('foot-privacy-link'); if (pl) pl.href = '/privacy' + suffix + '.html';
+  const rl = document.getElementById('foot-refund-link'); if (rl) rl.href = '/refund' + suffix + '.html';
   const url = new URL(location); url.searchParams.set('lang', lang); history.replaceState({}, '', url);
 }
 (()=>{
