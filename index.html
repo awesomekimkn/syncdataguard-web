@@ -593,6 +593,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <div class="fc"><div class="fi">📑</div><h3 data-i18n="f4t">Verify and cut over instantly</h3><p data-i18n="f4d">The moment migration completes, file counts and checksums are verified automatically. That moment is your cutover. No downtime required. — minimizing switchover time.</p><span class="ftag" data-i18n="f4g">Instant cutover decision</span></div>
       <div class="fc"><div class="fi">📅</div><h3 data-i18n="f5t">Automation & Data Replication</h3><p data-i18n="f5d">Automate recurring sync with daily, weekly, monthly, or Cron schedules. Replicate critical data to remote servers for schedule-based DR and business continuity. (Batch sync · Pro or higher)</p><span class="ftag" data-i18n="f5g">Pro · Enterprise</span></div>
       <div class="fc"><div class="fi">⏸</div><h3 data-i18n="f6t">Pause & resume / Error tracking</h3><p data-i18n="f6d">Stop anytime and resume from where you left off. Completed folders are skipped. All errors logged per file and downloadable.</p><span class="ftag" data-i18n="f6g">Full control</span></div>
+      <div class="fc" style="border:1px solid rgba(0,212,170,.3);background:rgba(0,212,170,.04)"><div class="fi">🤖</div><h3 data-i18n="f7t">Agent Mode — No SSH Required</h3><p data-i18n="f7d">Install a lightweight agent on the source server. SyncData Guard migrates via rsync daemon — no SSH keys, no passwords exposed. Ideal for security-sensitive environments and air-gapped networks.</p><span class="ftag" style="background:rgba(0,212,170,.15);color:#00d4aa" data-i18n="f7g">Enterprise · Zero credential exposure</span></div>
     </div>
   </div>
 </section>
@@ -602,7 +603,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
   <div class="wrap">
     <div class="sec-tag" data-i18n="arch_tag">Architecture</div>
     <h2 data-i18n="arch_h2">Any environment.<br>Any combination.</h2>
-    <p class="sec-desc" data-i18n="arch_desc">rsync-capable servers connect directly. Non-rsync storage handled via NFS/SMB mount. No agent required.</p>
+    <p class="sec-desc" data-i18n="arch_desc">rsync-capable servers connect directly. Non-rsync storage handled via NFS/SMB mount. Agent mode available for SSH-restricted environments.</p>
 
     <div class="arch-grid">
       <!-- MODE 1 -->
@@ -652,6 +653,22 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
           <div class="dc"><span data-i18n="m3c">SSH over rsync · NFS/SMB</span></div>
         </div>
         <div class="ac-note"><span>✓</span> <span data-i18n="m3n">Flexible topology · NAS mount support</span></div>
+      </div>
+      <!-- MODE 4 - Agent Mode -->
+      <div class="ac" style="border:1px solid rgba(0,212,170,.35);background:rgba(0,212,170,.03)">
+        <div class="ac-mode" style="color:#00d4aa">🤖 MODE 4 <span style="font-size:10px;background:rgba(0,212,170,.15);color:#00d4aa;padding:2px 8px;border-radius:10px;margin-left:4px">Enterprise</span></div>
+        <h3 data-i18n="m4t">Agent Mode — No SSH</h3>
+        <div class="sub" data-i18n="m4s">Zero credential exposure · Security-first</div>
+        <p data-i18n="m4d">Install a lightweight agent on the source server. Migration via rsync daemon — no SSH keys, no passwords transmitted. One port only. Ideal for regulated environments, air-gapped networks, and RHEL 7+ legacy servers.</p>
+        <div class="diagram">
+          <div class="dbox">
+            <div class="db" style="border-color:rgba(0,212,170,.4)"><div class="dn" data-i18n="m4src">Source server</div><div class="ds" data-i18n="m4ss">🤖 Agent (port 8099)</div></div>
+            <div class="darrow" style="color:#00d4aa">→</div>
+            <div class="db mint"><div class="dn" data-i18n="m4tg">SyncData Guard</div><div class="ds" data-i18n="m4ts">Target (local)</div></div>
+          </div>
+          <div class="dc" style="color:#00d4aa"><span data-i18n="m4c">🔒 rsync daemon · No SSH · Token auth</span></div>
+        </div>
+        <div class="ac-note" style="color:#00d4aa"><span>✓</span> <span data-i18n="m4n">No SSH keys · No passwords · RHEL 7+ · Air-gapped</span></div>
       </div>
     </div>
 
@@ -1017,13 +1034,16 @@ const D = {
     f4t:'검증 완료 즉시 서비스 전환',f4d:'이관 완료 즉시 파일 수·체크섬 검증 결과를 출력합니다. 검증이 끝나는 순간이 전환 시점입니다. 다운타임 없이 서비스를 넘깁니다.',f4g:'즉시 전환 결정',
     f5t:'자동화 & 데이터 이중화',f5d:'일간·주간·월간·Cron 스케줄로 정기 동기화를 자동화합니다. 중요 데이터를 원격 서버에 자동 복제해 데이터 이중화와 스케줄 기반 DR 환경을 구성합니다. (배치 동기화 방식 · Pro 이상)',f5g:'Pro · Enterprise',f5g:'Pro · Enterprise',
     f6t:'중단 & 재개 / 에러 추적',f6d:'언제든 중단하고 이어받을 수 있습니다. 에러 로그를 파일 단위로 기록·다운로드할 수 있습니다.',f6g:'완전한 제어',
-    arch_tag:'이관 아키텍처',arch_h2:'어떤 환경 조합도<br>지원합니다.',arch_desc:'rsync를 지원하는 서버·NAS는 직접 연결하고, 지원하지 않으면 NFS/SMB 마운트로 해결합니다.',
+    arch_tag:'이관 아키텍처',arch_h2:'어떤 환경 조합도<br>지원합니다.',arch_desc:'rsync를 지원하는 서버·NAS는 직접 연결하고, 지원하지 않으면 NFS/SMB 마운트로 해결합니다. SSH가 제한된 환경은 에이전트 모드로 해결합니다.',
     rec:'추천',m1t:'원격 → 원격',m1s:'rsync 지원 서버·NAS 간',m1d:'SyncData Guard가 제어만 담당하고 소스에서 직접 타겟으로 전송합니다. 네트워크 효율 최대, 페타급 최적.',
     src:'소스 서버·NAS',tgt:'타겟 서버·NAS',ctrl:'🖥 SyncData Guard (제어)',m1n:'가장 빠름 · 대역폭 100% · 페타급 최적',
     m2t:'로컬(NAS) → 로컬(NAS)',m2s:'NFS/SMB 마운트 방식',m2d:'rsync가 없는 NAS도 NFS/SMB 마운트로 이관합니다. 벤더 무관, 에이전트 불필요.',
     m2src:'로컬(NAS)',m2ss:'NFS 마운트 ↓',m2tgt:'로컬(NAS)',m2ts:'NFS 마운트 ↓',m2ctrl:'🖥 SyncData Guard (중계·이관)',m2n:'벤더 무관 · rsync 불필요 · HNAS·NetApp',
     m3t:'로컬 ↔ 원격',m3s:'혼합·단일 서버 환경',m3d:'SyncData Guard 서버가 소스·타겟 한쪽을 담당합니다. 파일서버→NAS, NAS→클라우드 등 다양한 시나리오.',
     m3sg:'SyncData Guard 서버',m3ss:'소스 겸 제어',m3tg:'원격 서버·NAS',m3ts:'모든 벤더',m3c:'SSH over rsync · NFS/SMB',m3n:'유연한 구성 · NAS 마운트 지원',
+    m4t:'에이전트 모드 — SSH 불필요',m4s:'자격 증명 노출 없음 · 보안 최우선',m4d:'소스 서버에 경량 에이전트를 설치합니다. rsync 데몬을 통해 이관하므로 SSH 키나 비밀번호 전송이 불필요합니다. 포트 1개만 개방하면 됩니다. 규제 환경, 망 분리 네트워크, RHEL 7 이상 레거시 서버에 최적입니다.',
+    m4src:'소스 서버',m4ss:'🤖 에이전트 (포트 8099)',m4tg:'SyncData Guard',m4ts:'타겟 (로컬)',m4c:'🔒 rsync 데몬 · SSH 없음 · 토큰 인증',m4n:'SSH 키 불필요 · 비밀번호 불필요 · RHEL 7+ · 망분리',
+    f7t:'에이전트 모드 — SSH 불필요',f7d:'소스 서버에 경량 에이전트를 설치하면 SSH 없이 이관됩니다. SSH 키나 비밀번호 노출 없이 rsync 데몬 방식으로 안전하게 전송합니다. 보안 환경, 망 분리 네트워크에 최적입니다.',f7g:'Enterprise · 자격 증명 노출 없음',
     nas_title:'✅ 검증된 NAS / 서버 호환 목록',na1:'SSH+rsync 직접',na2:'SSH+rsync 직접',na3:'SSH+rsync 직접',na4:'NFS 마운트',na5:'NFS/SMB 마운트',na6:'마운트 이관',
     nas_foot:'rsync를 지원하는 모든 Linux 서버·NAS와 직접 연결 가능 · NFS/SMB 마운트로 나머지 모두 지원',
     os_title:'SyncData Guard 설치 가능 서버 OS (NAS 자체 OS 무관)',os_note:'패키지 매니저 자동 감지 (apt/dnf/yum) · 완전 오프라인 설치 · 신규 OS 자동 지원',
@@ -1098,13 +1118,16 @@ const D = {
     f4t:'Verify and cut over instantly',f4d:'The moment migration completes, file counts and checksums are verified automatically. That moment is your cutover. No downtime required. — minimizing switchover time.',f4g:'Instant cutover decision',
     f5t:'Automation & Data Replication',f5d:'Automate recurring sync with daily, weekly, monthly, or Cron schedules. Replicate critical data to remote servers for schedule-based DR and business continuity. (Batch sync · Pro or higher)',f5g:'Pro · Enterprise',f5g:'Pro · Enterprise',
     f6t:'Pause & resume / Error tracking',f6d:'Stop anytime and resume from where you left off. Completed folders are skipped. All errors logged per file and downloadable.',f6g:'Full control',
-    arch_tag:'Architecture',arch_h2:'Any environment.<br>Any combination.',arch_desc:'rsync-capable servers connect directly. Non-rsync storage handled via NFS/SMB mount. No agent required.',
+    arch_tag:'Architecture',arch_h2:'Any environment.<br>Any combination.',arch_desc:'rsync-capable servers connect directly. Non-rsync storage handled via NFS/SMB mount. Agent mode available for SSH-restricted environments.',
     rec:'Best',m1t:'Remote → Remote',m1s:'Between rsync-capable servers · NAS',m1d:'SyncData Guard orchestrates only. rsync runs source-to-target directly — maximum throughput, petabyte-optimized.',
     src:'Source server · NAS',tgt:'Target server · NAS',ctrl:'🖥 SyncData Guard (orchestrate)',m1n:'Fastest · 100% bandwidth · Petabyte-optimized',
     m2t:'Local(NAS) → Local(NAS)',m2s:'NFS/SMB mount-based',m2d:'Mount both NAS via NFS/SMB to SyncData Guard. Works with any vendor — no rsync, no agent needed.',
     m2src:'Local(NAS)',m2ss:'NFS mount ↓',m2tgt:'Local(NAS)',m2ts:'NFS mount ↓',m2ctrl:'🖥 SyncData Guard (relay)',m2n:'Vendor-agnostic · No rsync · HNAS · NetApp',
     m3t:'Local ↔ Remote',m3s:'Mixed or single-server',m3d:'SyncData Guard server acts as source or target. File server→NAS, NAS→cloud, or same-server partitions.',
     m3sg:'SyncData Guard server',m3ss:'source & control',m3tg:'Remote server · NAS',m3ts:'any vendor',m3c:'SSH over rsync · NFS/SMB',m3n:'Flexible topology · NAS mount support',
+    m4t:'Agent Mode — No SSH',m4s:'Zero credential exposure · Security-first',m4d:'Install a lightweight agent on the source server. Migration via rsync daemon — no SSH keys, no passwords transmitted. One port only. Ideal for regulated environments, air-gapped networks, and RHEL 7+ legacy servers.',
+    m4src:'Source server',m4ss:'🤖 Agent (port 8099)',m4tg:'SyncData Guard',m4ts:'Target (local)',m4c:'🔒 rsync daemon · No SSH · Token auth',m4n:'No SSH keys · No passwords · RHEL 7+ · Air-gapped',
+    f7t:'Agent Mode — No SSH Required',f7d:'Install a lightweight agent on the source server. SyncData Guard migrates via rsync daemon — no SSH keys, no passwords exposed. Ideal for security-sensitive environments and air-gapped networks.',f7g:'Enterprise · Zero credential exposure',
     nas_title:'✅ Verified NAS / server compatibility',na1:'SSH+rsync direct',na2:'SSH+rsync direct',na3:'SSH+rsync direct',na4:'NFS mount',na5:'NFS/SMB mount',na6:'Mount migration',
     nas_foot:'Any rsync-capable Linux server · NAS connects directly · NFS/SMB mount covers everything else',
     os_title:'Supported OS for SyncData Guard server (NAS OS does not matter)',os_note:'Package manager auto-detection (apt/dnf/yum) · Full offline install · Future OS versions auto-supported',
@@ -1156,13 +1179,16 @@ const D = {
     f4t:'検証完了即時サービス切り替え',f4d:'移行完了と同時にファイル数・チェックサムを自動検証します。その瞬間が切り替えのタイミングです。ダウンタイム不要で移行が完了します。',f4g:'即時切替判断',
     f5t:'スケジュール移行 & バックアップ',f5d:'日次・週次・月次・Cronスケジュールで定期移行・バックアップを自動化します。大切なデータを、手動作業なしで守ります。',f5g:'Pro · Enterprise',
     f6t:'一時停止 & 再開 / エラー追跡',f6d:'いつでも中断・再開できます。完了済みフォルダは自動スキップ。エラーログをファイル単位で記録・ダウンロード可能。',f6g:'完全な制御',
-    arch_tag:'アーキテクチャ',arch_h2:'あらゆる環境の<br>組み合わせに対応。',arch_desc:'rsync対応サーバー·NASは直接接続、非対応はNFS/SMBマウントで解決。エージェントインストール不要。',
+    arch_tag:'アーキテクチャ',arch_h2:'あらゆる環境の<br>組み合わせに対応。',arch_desc:'rsync対応サーバー·NASは直接接続、非対応はNFS/SMBマウントで解決。SSH制限環境はエージェントモードで対応。',
     rec:'推奨',m1t:'リモート → リモート',m1s:'rsync対応サーバー·NAS間',m1d:'SyncData Guardは制御のみ担当。rsyncがソースから直接ターゲットへ転送。ネットワーク効率最大、ペタバイト最適。',
     src:'ソースサーバー·NAS',tgt:'ターゲットサーバー·NAS',ctrl:'🖥 SyncData Guard (制御)',m1n:'最速 · 帯域幅100% · ペタバイト最適',
     m2t:'ローカル(NAS) → ローカル(NAS)',m2s:'NFS/SMBマウント方式',m2d:'rsyncのないNASもNFS/SMBでSyncData Guardにマウントして移行。ベンダー不問、エージェント不要。',
     m2src:'ローカル(NAS)',m2ss:'NFSマウント ↓',m2tgt:'ローカル(NAS)',m2ts:'NFSマウント ↓',m2ctrl:'🖥 SyncData Guard (中継)',m2n:'ベンダー不問 · rsync不要 · HNAS · NetApp',
     m3t:'ローカル ↔ リモート',m3s:'混合·単一サーバー環境',m3d:'SyncData Guardサーバーがソース·ターゲット一方を担当。ファイルサーバー→NAS、NAS→クラウド等様々なシナリオに対応。',
     m3sg:'SyncData Guardサーバー',m3ss:'ソース兼制御',m3tg:'リモートサーバー·NAS',m3ts:'全ベンダー',m3c:'SSH over rsync · NFS/SMB',m3n:'柔軟な構成 · NASマウント対応',
+    m4t:'エージェントモード — SSH不要',m4s:'認証情報漏洩ゼロ · セキュリティ最優先',m4d:'ソースサーバーに軽量エージェントをインストール。rsyncデーモン経由で移行するため、SSHキーやパスワードの送信が不要です。ポート1つのみ開放すればOK。規制環境・エアギャップネットワーク・RHEL 7+レガシーサーバーに最適。',
+    m4src:'ソースサーバー',m4ss:'🤖 エージェント (ポート 8099)',m4tg:'SyncData Guard',m4ts:'ターゲット (ローカル)',m4c:'🔒 rsyncデーモン · SSH不要 · トークン認証',m4n:'SSHキー不要 · パスワード不要 · RHEL 7+ · エアギャップ',
+    f7t:'エージェントモード — SSH不要',f7d:'ソースサーバーに軽量エージェントをインストールするだけ。SSHキーやパスワード不要でrsyncデーモン経由で安全に移行。セキュリティ環境・エアギャップネットワークに最適。',f7g:'Enterprise · 認証情報漏洩ゼロ',
     nas_title:'✅ 検証済みNAS / サーバー互換リスト',na1:'SSH+rsync直接',na2:'SSH+rsync直接',na3:'SSH+rsync直接',na4:'NFSマウント',na5:'NFS/SMBマウント',na6:'マウント移行',
     nas_foot:'rsync対応の全Linuxサーバー·NASに直接接続 · NFS/SMBマウントで残りすべてに対応',
     os_title:'SyncData Guardインストール可能なサーバーOS（NAS自体のOSは不問）',os_note:'パッケージマネージャー自動検出(apt/dnf/yum) · 完全オフラインインストール · 新OSバージョン自動対応',
