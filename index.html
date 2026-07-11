@@ -526,6 +526,8 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <tr><td data-i18n="c5">Scheduled automation</td><td class="no">✕</td><td class="pa" data-i18n="cv5">△ Manual setup</td><td class="ok hl">✓</td></tr>
         <tr><td data-i18n="c6">Integrity report</td><td class="no">✕</td><td class="pa" data-i18n="cv6">△ Limited</td><td class="ok hl">✓</td></tr>
         <tr><td data-i18n="c7">Offline install</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl">✓</td></tr>
+        <tr><td data-i18n="c11" style="color:#00d4aa;font-weight:600">🤖 No-SSH migration (Agent Mode)</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl" data-i18n="c11s" style="color:#00d4aa">✓ Enterprise</td></tr>
+        <tr><td data-i18n="c12">Bandwidth control (zero service impact)</td><td class="no">✕</td><td class="pa" data-i18n="cv12">△ Limited</td><td class="ok hl">✓</td></tr>
         <tr><td data-i18n="c8">Cost</td><td class="pa" data-i18n="c8a">Low (labor cost↑)</td><td class="no" data-i18n="c8b">$100K+</td><td class="ok hl" data-i18n="c8c">Affordable</td></tr>
         <tr><td data-i18n="c9">Web UI (browser only)</td><td class="no">✕</td><td class="pa" data-i18n="cv9">△ Separate client</td><td class="ok hl">✓</td></tr>
         <tr><td data-i18n="c10">Storage analysis → scan → migrate → verify → report. All in one.</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl">✓</td></tr>
@@ -952,6 +954,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_p16">Up to 16 parallel streams</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_anaf">Storage analytics · history tracking</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_off">Air-gapped · offline install</span></div>
+        <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_agent" style="color:#00d4aa">🤖 Agent Mode — No SSH required</span></div>
         <div class="pf"><span class="y">✓</span><span class="t y" data-i18n="pf_sup">Dedicated support</span></div>
         <button onclick="openCheckout('pri_01ktbfvsdzw15kj08r2tthmg6s')" class="pbtn pg" data-i18n="btn3" style="cursor:pointer;border:none;width:100%">Contact sales →</button>
       </div>
@@ -1026,7 +1029,7 @@ const D = {
     why_tag:'왜 SyncData Guard?',why_h2:'이관 중에도<br>서비스는 멈추지 않습니다.',
     why_desc:'기존 이관 방식은 서비스를 내리고, 옮기고, 다시 올립니다. 그 사이 발생하는 다운타임은 비용이고 리스크입니다. SyncData Guard는 서비스를 운영하면서 점진적으로 데이터를 이관합니다. 검증이 완료된 순간이 전환 시점입니다.',
     cmp_feature:'기능',cmp_rsync:'단순 rsync',cmp_vendor:'벤더 전용 툴',
-    c1:'GUI 모니터링',c2:'벤더 간 이관',c3:'페타급 안정성',c4:'청크 병렬 이관',c5:'예약 자동화',c6:'정합성 리포트',c7:'오프라인 설치',c8:'도입 비용',c8a:'낮음 (인건비↑)',c8b:'억대 이상',c8c:'합리적',c8a2:'△ 제한적',c8b2:'✕',c8c2:'✓',cv1:'△ 제한적',cv3:'△ 자사만',cv5:'△ 별도 구축',cv6:'△ 제한적',cv9:'△ 별도 클라이언트',c9:'웹 UI (브라우저만으로)',c10:'스토리지 분석→안전한 스캔→이관→검증→리포트 까지 단번에 해결',
+    c1:'GUI 모니터링',c2:'벤더 간 이관',c3:'페타급 안정성',c4:'청크 병렬 이관',c5:'예약 자동화',c6:'정합성 리포트',c7:'오프라인 설치',c8:'도입 비용',c8a:'낮음 (인건비↑)',c8b:'억대 이상',c8c:'합리적',c8a2:'△ 제한적',c8b2:'✕',c8c2:'✓',cv1:'△ 제한적',cv3:'△ 자사만',cv5:'△ 별도 구축',cv6:'△ 제한적',cv9:'△ 별도 클라이언트',c9:'웹 UI (브라우저만으로)',c10:'스토리지 분석→안전한 스캔→이관→검증→리포트 까지 단번에 해결',c11:'🤖 SSH 없는 이관 (에이전트 모드)',c11s:'✓ Enterprise 전용',c12:'대역폭 제어 (서비스 영향 최소화)',cv12:'△ 제한적',
     feat_tag:'핵심 기능',feat_h2:'무중단 이관을 위한<br>모든 도구가 여기 있습니다.',feat_desc:'연결 · 분석 · 이관 · 검증 · 전환까지. 서비스 중단 없이 전 과정을 하나의 솔루션으로.',
     f1t:'청크 병렬 이관',f1d:'대용량 폴더를 N개 청크로 분할해 최대 16개 스트림으로 동시 전송합니다.',f1g:'Enterprise: 최대 16 스트림',
     f2t:'실시간 모니터링',f2d:'WebSocket 기반 대시보드로 폴더별 진행률, 속도, ETA, 에러를 실시간으로 확인합니다.',f2g:'모든 플랜',
@@ -1058,7 +1061,7 @@ const D = {
     pps:'/license',popular:'인기',
     pf_all:'모든 이관 방식 (로컬↔원격)',pf_mon:'실시간 모니터링',pf_ver:'정합성 검증',pf_p1:'병렬 1 스트림',pf_sch:'예약 이관',pf_chk:'청크 병렬 이관',pf_ana:'스토리지 분석',
     pf_bas:'Basic 모든 기능',pf_schf:'예약 이관 (일간·주간·Cron)',pf_bw:'대역폭 제어',pf_p4:'병렬 최대 4 스트림',pf_rep:'통합 리포트 지원',
-    pf_pro:'Pro 모든 기능',pf_chkf:'청크 병렬 이관 (무제한)',pf_p16:'병렬 최대 16 스트림',pf_anaf:'스토리지 분석 · 이력 관리',pf_off:'망분리 · 오프라인 설치',pf_sup:'전담 기술 지원',
+    pf_pro:'Pro 모든 기능',pf_chkf:'청크 병렬 이관 (무제한)',pf_p16:'병렬 최대 16 스트림',pf_anaf:'스토리지 분석 · 이력 관리',pf_off:'망분리 · 오프라인 설치',pf_agent:'🤖 에이전트 모드 — SSH 불필요',pf_sup:'전담 기술 지원',
     btn1:'구매하기 →',btn2:'구매하기 →',btn3:'구매하기 →',
     pipe_tag:'원 파이프라인',pipe_h3:'스토리지 분석부터 리포트까지<br>단번에 끝납니다.',
     pipe_p:'rsync 명령어를 몰라도 됩니다. 서버 등록부터 스캔, 이관 실행, 정합성 검증, 리포트 출력까지 하나의 웹 UI에서 클릭 몇 번으로 완료됩니다.',
@@ -1110,7 +1113,7 @@ const D = {
     why_tag:'Why SyncData Guard?',why_h2:'Services stay up.<br>Data moves.',
     why_desc:'Traditional migration means taking services down, moving data, and bringing everything back up. The downtime is costly and risky. SyncData Guard migrates data while services keep running. When verification completes, you cut over. That simple.',
     cmp_feature:'Feature',cmp_rsync:'Plain rsync',cmp_vendor:'Vendor tool',
-    c1:'GUI monitoring',c2:'Cross-vendor migration',c3:'Petabyte stability',c4:'Chunk parallel transfer',c5:'Scheduled automation',c6:'Integrity report',c7:'Offline install',c8:'Cost',c8a:'Low (labor cost↑)',c8b:'$100K+',c8c:'Affordable',cv1:'△ Limited',cv3:'△ Same vendor only',cv5:'△ Manual setup',cv6:'△ Limited',cv9:'△ Separate client',c9:'Web UI (browser only)',c10:'Storage analysis → scan → migrate → verify → report. All in one.',
+    c1:'GUI monitoring',c2:'Cross-vendor migration',c3:'Petabyte stability',c4:'Chunk parallel transfer',c5:'Scheduled automation',c6:'Integrity report',c7:'Offline install',c8:'Cost',c8a:'Low (labor cost↑)',c8b:'$100K+',c8c:'Affordable',cv1:'△ Limited',cv3:'△ Same vendor only',cv5:'△ Manual setup',cv6:'△ Limited',cv9:'△ Separate client',c9:'Web UI (browser only)',c10:'Storage analysis → scan → migrate → verify → report. All in one.',c11:'🤖 No-SSH migration (Agent Mode)',c11s:'✓ Enterprise',c12:'Bandwidth control (zero service impact)',cv12:'△ Limited',
     feat_tag:'Core features',feat_h2:'Every tool you need for<br>near-zero downtime migration.',feat_desc:'From launch to verification — one solution handles it all.',
     f1t:'Parallel chunk transfer',f1d:'Split large folders into N chunks and transfer with up to 16 simultaneous streams.',f1g:'Enterprise: up to 16 streams',
     f2t:'Real-time monitoring',f2d:'Live WebSocket dashboard shows per-folder progress, speed, ETA, and error logs.',f2g:'All plans',
@@ -1142,7 +1145,7 @@ const D = {
     pps:'/license',popular:'Most popular',
     pf_all:'All transfer modes (local ↔ remote)',pf_mon:'Real-time monitoring',pf_ver:'Integrity verification',pf_p1:'1 parallel stream',pf_sch:'Scheduled migration',pf_chk:'Chunk parallel transfer',pf_ana:'Storage analytics',
     pf_bas:'Everything in Basic',pf_schf:'Scheduled migration (daily/weekly/Cron)',pf_bw:'Bandwidth control',pf_p4:'Up to 4 parallel streams',pf_rep:'Integrated report',
-    pf_pro:'Everything in Pro',pf_chkf:'Chunk parallel transfer (unlimited)',pf_p16:'Up to 16 parallel streams',pf_anaf:'Storage analytics · history tracking',pf_off:'Air-gapped · offline install',pf_sup:'Dedicated support',
+    pf_pro:'Everything in Pro',pf_chkf:'Chunk parallel transfer (unlimited)',pf_p16:'Up to 16 parallel streams',pf_anaf:'Storage analytics · history tracking',pf_off:'Air-gapped · offline install',pf_agent:'🤖 Agent Mode — No SSH required',pf_sup:'Dedicated support',
     btn1:'Contact sales',btn2:'Contact sales',btn3:'Contact sales →',
     pipe_tag:'One pipeline',pipe_h3:'Storage analysis to final report.<br>All in one workflow.',
     pipe_p:'No rsync knowledge needed. Server setup, scan, migration, integrity verification, and report — all from one web UI, no other tools required.',
@@ -1203,7 +1206,7 @@ const D = {
     pps:'/license',popular:'人気',
     pf_all:'全転送方式（ローカル↔リモート）',pf_mon:'リアルタイム監視',pf_ver:'整合性検証',pf_p1:'並列1ストリーム',pf_sch:'スケジュール移行',pf_chk:'チャンク並列転送',pf_ana:'ストレージ分析',
     pf_bas:'Basicの全機能',pf_schf:'スケジュール移行（日次·週次·Cron）',pf_bw:'帯域幅制御',pf_p4:'最大4並列ストリーム',pf_rep:'統合レポート対応',
-    pf_pro:'Proの全機能',pf_chkf:'チャンク並列転送（無制限）',pf_p16:'最大16並列ストリーム',pf_anaf:'ストレージ分析 · 履歴管理',pf_off:'エアギャップ · オフラインインストール',pf_sup:'専任サポート',
+    pf_pro:'Proの全機能',pf_chkf:'チャンク並列転送（無制限）',pf_p16:'最大16並列ストリーム',pf_anaf:'ストレージ分析 · 履歴管理',pf_off:'エアギャップ · オフラインインストール',pf_agent:'🤖 エージェントモード — SSH不要',pf_sup:'専任サポート',
     btn1:'お問い合わせ',btn2:'お問い合わせ',btn3:'導入のお問い合わせ →',
     pipe_tag:'ワンパイプライン',pipe_h3:'ストレージ分析からレポートまで<br>一気に完結します。',
     pipe_p:'rsyncコマンドの知識不要。サーバー登録からスキャン、移行実行、整合性検証、レポート出力まで1つのWebUIでクリック数回で完了。他のツール不要。',
