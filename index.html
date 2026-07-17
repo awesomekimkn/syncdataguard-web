@@ -3,8 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SyncData Guard — Server Data Migration Tool | Linux File Transfer & rsync Web UI</title>
-<meta name="description" content="Any server, any NAS, any scale. The new standard for file-based large-scale data migration.">
+<title>SyncData Guard — Linux Data Migration Tool | Relay-Based SSH-Free File Transfer</title>
+<meta name="description" content="Migrate servers and NAS without direct SSH access. SyncDataGuard's relay gateway pulls from source and pushes to target — no agent on production servers. Agentless data migration for Linux, RHEL, NAS.">
+<meta name="keywords" content="data migration tool, linux file migration, nas migration, rsync web ui, agentless migration, relay server migration, no ssh migration, server data transfer, rhel migration, sftp alternative, secure file migration, scheduled data sync, DR replication">
+<meta property="og:title" content="SyncData Guard — Relay-Based Linux Data Migration">
+<meta property="og:description" content="Migrate servers without SSH keys or agent installation. Relay gateway approach — the only migration tool that works through firewalls without touching production servers.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://syncdataguard.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -434,6 +439,35 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "SyncDataGuard",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Linux",
+  "description": "Server data migration tool with relay gateway architecture. Migrate Linux servers and NAS without SSH keys or agent installation on production servers. Supports 9 transfer modes including Agent-to-Agent, SSH-to-Agent, and all combinations.",
+  "url": "https://syncdataguard.com",
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "USD",
+    "lowPrice": "0",
+    "offerCount": "3"
+  },
+  "featureList": [
+    "Relay gateway architecture - no direct server-to-server connection",
+    "Agentless migration - no agent on production servers",
+    "9 transfer modes: SSH, Agent, Local combinations",
+    "Air-gapped network support",
+    "No SSH key exposure",
+    "16 parallel streams",
+    "MD5 integrity verification",
+    "Scheduled automation",
+    "RHEL 7/8/9 support",
+    "NAS migration: Synology, QNAP, NetApp, Isilon"
+  ]
+}
+</script>
 </head>
 <body>
 <div id="paddle-success" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#00e5a0;color:#0a0f0d;padding:16px 32px;border-radius:12px;font-weight:600;font-size:15px;box-shadow:0 8px 32px rgba(0,229,160,.4)" data-i18n="paddle_success_msg">
@@ -465,9 +499,9 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
   <div class="hero-grid"></div>
   <div class="hero-inner">
     <div>
-      <div class="tag" data-i18n="hero_tag">Near-Zero Downtime Server Migration</div>
-      <h1 data-i18n="hero_h1">No complex commands. A few clicks<br><em>for safe, fully verified data migration.</em></h1>
-      <p class="hero-sub" data-i18n="hero_sub">No rsync command line knowledge needed. From server connection to migration, verification, and reports — all done with a few clicks in the web UI. <strong>Cut over with confidence</strong> the moment verification completes.</p>
+      <div class="tag" data-i18n="hero_tag">Relay-Based · SSH-Free · Near-Zero Downtime Migration</div>
+      <h1 data-i18n="hero_h1">No SSH access needed.<br><em>Data migrates through a secure relay gateway.</em></h1>
+      <p class="hero-sub" data-i18n="hero_sub">SyncDataGuard's relay pulls from source and pushes to target — <strong>no direct server-to-server connection required.</strong> Works through firewalls, air-gapped networks, and security-restricted environments. From scan to verified cutover, all from one web UI.</p>
       <div class="hero-btns">
         <a href="#download" class="btn-p" data-i18n="hero_cta1">Start free trial →</a>
         <a href="#why" class="btn-s" data-i18n="hero_cta2">Why SyncDataGuard?</a>
@@ -503,12 +537,52 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
   </div>
 </section>
 
+<!-- RELAY BANNER -->
+<section style="background:linear-gradient(135deg,rgba(14,165,201,.08),rgba(0,229,160,.05));padding:48px 48px;border-top:1px solid rgba(14,165,201,.15);border-bottom:1px solid rgba(14,165,201,.15)">
+  <div class="wrap">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:#0EA5C9;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px" data-i18n="relay_tag">🔄 Relay Gateway Architecture</div>
+        <h2 style="font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.2;letter-spacing:-1px;margin-bottom:16px" data-i18n="relay_h2">The only migration tool that works<br><span style="color:#0EA5C9">without touching production servers.</span></h2>
+        <p style="font-size:14px;color:var(--muted);line-height:1.85;margin-bottom:20px" data-i18n="relay_p">Most tools require SSH access, credential sharing, or agent installation on production servers. SyncDataGuard's relay gateway is different — it sits between source and target, pulling and pushing data without any direct server-to-server connection.</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted)"><span style="color:#0EA5C9;font-weight:700;flex-shrink:0">✓</span> <span data-i18n="relay_b1">No SSH keys or passwords on production servers</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted)"><span style="color:#0EA5C9;font-weight:700;flex-shrink:0">✓</span> <span data-i18n="relay_b2">Works through firewalls — only one port needed per server</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted)"><span style="color:#0EA5C9;font-weight:700;flex-shrink:0">✓</span> <span data-i18n="relay_b3">Supports air-gapped and security-restricted environments</span></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted)"><span style="color:#0EA5C9;font-weight:700;flex-shrink:0">✓</span> <span data-i18n="relay_b4">9 source-target combinations: SSH, Agent, or Local — any mix</span></div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid rgba(14,165,201,.2);border-radius:14px;padding:28px 32px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:20px;text-align:center;font-weight:600;text-transform:uppercase;letter-spacing:.08em" data-i18n="relay_how">How relay works</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="background:rgba(14,165,201,.1);border:1px solid rgba(14,165,201,.3);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:#0EA5C9;min-width:120px;text-align:center" data-i18n="relay_src">Source Server<br><span style="font-size:10px;color:var(--muted);font-weight:400">SSH / Agent / Local</span></div>
+            <div style="color:#0EA5C9;font-size:18px">→</div>
+            <div style="background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.4);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;color:#00E5A0;min-width:130px;text-align:center">SyncDataGuard<br><span style="font-size:10px;color:var(--muted);font-weight:400" data-i18n="relay_gw">Relay Gateway</span></div>
+            <div style="color:#0EA5C9;font-size:18px">→</div>
+            <div style="background:rgba(14,165,201,.1);border:1px solid rgba(14,165,201,.3);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:#0EA5C9;min-width:120px;text-align:center" data-i18n="relay_tgt">Target Server<br><span style="font-size:10px;color:var(--muted);font-weight:400">SSH / Agent / Local</span></div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:var(--dim);padding:8px;border-top:1px solid var(--border);margin-top:4px" data-i18n="relay_note">No direct source↔target connection · Relay handles all traffic</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px">
+          <div style="text-align:center;padding:8px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--muted)">SSH → SSH</div>
+          <div style="text-align:center;padding:8px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--muted)">Agent → Agent</div>
+          <div style="text-align:center;padding:8px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--muted)">SSH → Agent</div>
+          <div style="text-align:center;padding:8px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--muted)">Agent → SSH</div>
+          <div style="text-align:center;padding:8px;background:var(--bg);border-radius:8px;font-size:11px;color:var(--muted)">Local → Agent</div>
+          <div style="text-align:center;padding:8px;background:rgba(14,165,201,.05);border:1px solid rgba(14,165,201,.2);border-radius:8px;font-size:11px;color:#0EA5C9;font-weight:600" data-i18n="relay_more">+4 more</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- WHY -->
 <section class="why" id="why">
   <div class="wrap">
     <div class="sec-tag" data-i18n="why_tag">Why SyncData Guard?</div>
     <h2 data-i18n="why_h2">Services stay up.<br>Data moves.</h2>
-    <p class="sec-desc" data-i18n="why_desc">Traditional migration means taking services down, moving data, and bringing everything back up. The downtime is costly and risky. SyncData Guard migrates data while services keep running. When verification completes, you cut over. That simple.</p>
+    <p class="sec-desc" data-i18n="why_desc">Traditional migration requires direct server-to-server access, SSH keys, or expensive vendor agents. SyncDataGuard uses a relay gateway — it pulls data from the source and pushes to the target, so production servers are never directly exposed. Services stay up. Data moves safely.</p>
     <table class="cmp-table">
       <thead>
         <tr>
@@ -526,7 +600,8 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
         <tr><td data-i18n="c5">Scheduled automation</td><td class="no">✕</td><td class="pa" data-i18n="cv5">△ Manual setup</td><td class="ok hl">✓</td></tr>
         <tr><td data-i18n="c6">Integrity report</td><td class="no">✕</td><td class="pa" data-i18n="cv6">△ Limited</td><td class="ok hl">✓</td></tr>
         <tr><td data-i18n="c7">Offline install</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl">✓</td></tr>
-        <tr><td data-i18n="c11" style="color:#00d4aa;font-weight:600">🤖 No-SSH migration (Agent Mode)</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl" data-i18n="c11s" style="color:#00d4aa">✓ Enterprise</td></tr>
+        <tr><td style="color:#00d4aa;font-weight:600">🔄 Relay gateway (no direct server access)</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl" style="color:#00d4aa">✓ All plans</td></tr>
+        <tr><td data-i18n="c11" style="color:#00d4aa;font-weight:600">🤖 Agent mode (No SSH, no credential exposure)</td><td class="no">✕</td><td class="no">✕</td><td class="ok hl" data-i18n="c11s" style="color:#00d4aa">✓ Enterprise</td></tr>
         <tr><td data-i18n="c12">Bandwidth control (zero service impact)</td><td class="no">✕</td><td class="pa" data-i18n="cv12">△ Limited</td><td class="ok hl">✓</td></tr>
         <tr><td data-i18n="c8">Cost</td><td class="pa" data-i18n="c8a">Low (labor cost↑)</td><td class="no" data-i18n="c8b">$100K+</td><td class="ok hl" data-i18n="c8c">Affordable</td></tr>
         <tr><td data-i18n="c9">Web UI (browser only)</td><td class="no">✕</td><td class="pa" data-i18n="cv9">△ Separate client</td><td class="ok hl">✓</td></tr>
@@ -595,6 +670,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <div class="fc"><div class="fi">📑</div><h3 data-i18n="f4t">Verify and cut over instantly</h3><p data-i18n="f4d">The moment migration completes, file counts and checksums are verified automatically. That moment is your cutover. No downtime required. — minimizing switchover time.</p><span class="ftag" data-i18n="f4g">Instant cutover decision</span></div>
       <div class="fc"><div class="fi">📅</div><h3 data-i18n="f5t">Automation & Data Replication</h3><p data-i18n="f5d">Automate recurring sync with daily, weekly, monthly, or Cron schedules. Replicate critical data to remote servers for schedule-based DR and business continuity. (Batch sync · Pro or higher)</p><span class="ftag" data-i18n="f5g">Pro · Enterprise</span></div>
       <div class="fc"><div class="fi">⏸</div><h3 data-i18n="f6t">Pause & resume / Error tracking</h3><p data-i18n="f6d">Stop anytime and resume from where you left off. Completed folders are skipped. All errors logged per file and downloadable.</p><span class="ftag" data-i18n="f6g">Full control</span></div>
+      <div class="fc" style="border:1px solid rgba(29,111,232,.3);background:rgba(29,111,232,.04)"><div class="fi">🔬</div><h3 data-i18n="f8t">MD5 Precision Verification — DB Index Accelerated</h3><p data-i18n="f8d">After migration, every file's MD5 checksum is compared between source and target. A built-in DB index stores checksums from previous runs — so re-verification is near-instant, with no re-scanning needed. Missing files and mismatches are reported immediately.</p><span class="ftag" style="background:rgba(29,111,232,.15);color:#1D6FE8" data-i18n="f8g">All plans · Instant re-verify with index</span></div>
       <div class="fc" style="border:1px solid rgba(0,212,170,.3);background:rgba(0,212,170,.04)"><div class="fi">🤖</div><h3 data-i18n="f7t">Agent Mode — No SSH Required</h3><p data-i18n="f7d">Install a lightweight agent on the source server. SyncData Guard migrates via rsync daemon — no SSH keys, no passwords exposed. Ideal for security-sensitive environments and air-gapped networks.</p><span class="ftag" style="background:rgba(0,212,170,.15);color:#00d4aa" data-i18n="f7g">Enterprise · Zero credential exposure</span></div>
     </div>
   </div>
@@ -605,7 +681,7 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
   <div class="wrap">
     <div class="sec-tag" data-i18n="arch_tag">Architecture</div>
     <h2 data-i18n="arch_h2">Any environment.<br>Any combination.</h2>
-    <p class="sec-desc" data-i18n="arch_desc">rsync-capable servers connect directly. Non-rsync storage handled via NFS/SMB mount. Agent mode available for SSH-restricted environments.</p>
+    <p class="sec-desc" data-i18n="arch_desc">SyncDataGuard supports 9 source-target combinations. The relay gateway handles all traffic — no direct server-to-server connection ever required. SSH, Agent, or Local — any combination works.</p>
 
     <div class="arch-grid">
       <!-- MODE 1 -->
@@ -660,17 +736,17 @@ footer{background:var(--bg);border-top:1px solid var(--border);padding:40px 48px
       <div class="ac" style="border:1px solid rgba(0,212,170,.35);background:rgba(0,212,170,.03)">
         <div class="ac-mode" style="color:#00d4aa">🤖 MODE 4 <span style="font-size:10px;background:rgba(0,212,170,.15);color:#00d4aa;padding:2px 8px;border-radius:10px;margin-left:4px">Enterprise</span></div>
         <h3 data-i18n="m4t">Agent Mode — No SSH</h3>
-        <div class="sub" data-i18n="m4s">Zero credential exposure · Security-first</div>
-        <p data-i18n="m4d">Install a lightweight agent on the source server. Migration via rsync daemon — no SSH keys, no passwords transmitted. One port only. Ideal for regulated environments, air-gapped networks, and RHEL 7+ legacy servers.</p>
+        <div class="sub" data-i18n="m4s">Zero credential exposure · Security-first · 9 combinations</div>
+        <p data-i18n="m4d">Install a lightweight agent on source, target, or both. Migration via rsync daemon through SyncDataGuard's relay — no SSH keys, no passwords transmitted. Supports all 9 source-target combinations including Agent→Agent, Agent→SSH, SSH→Agent, and Local→Agent.</p>
         <div class="diagram">
           <div class="dbox">
-            <div class="db" style="border-color:rgba(0,212,170,.4)"><div class="dn" data-i18n="m4src">Source server</div><div class="ds" data-i18n="m4ss">🤖 Agent (port 8099)</div></div>
-            <div class="darrow" style="color:#00d4aa">→</div>
-            <div class="db mint"><div class="dn" data-i18n="m4tg">SyncData Guard</div><div class="ds" data-i18n="m4ts">Target (local)</div></div>
+            <div class="db" style="border-color:rgba(0,212,170,.4)"><div class="dn" data-i18n="m4src">Source (Agent)</div><div class="ds" data-i18n="m4ss">🤖 port 8099</div></div>
+            <div class="darrow" style="color:#00d4aa">→relay→</div>
+            <div class="db" style="border-color:rgba(0,212,170,.4)"><div class="dn" data-i18n="m4tg">Target (Agent)</div><div class="ds" data-i18n="m4ts">🤖 port 8099</div></div>
           </div>
-          <div class="dc" style="color:#00d4aa"><span data-i18n="m4c">🔒 rsync daemon · No SSH · Token auth</span></div>
+          <div class="dc" style="color:#00d4aa"><span data-i18n="m4c">🔒 Relay gateway · No SSH · Token auth · 9 modes</span></div>
         </div>
-        <div class="ac-note" style="color:#00d4aa"><span>✓</span> <span data-i18n="m4n">No SSH keys · No passwords · RHEL 7+ · Air-gapped</span></div>
+        <div class="ac-note" style="color:#00d4aa"><span>✓</span> <span data-i18n="m4n">No SSH keys · No passwords · RHEL 7+ · Air-gapped · Agent↔Agent supported</span></div>
       </div>
     </div>
 
@@ -1018,16 +1094,29 @@ const D = {
     lp_footer:'본 정책은 SyncData Guard 소프트웨어 구매 시 동의한 것으로 간주합니다.',
     demo_more_folders:'… 44개 폴더 더 보기 (총 48개)',
     nav_why:'왜 SyncDataGuard?',nav_feat:'기능',nav_arch:'아키텍처',nav_price:'가격',nav_contact:'문의',nav_report:'리포트',nav_cta:'무료 체험',
-    hero_tag:'서비스 중단 없는 대용량 서버 이관 솔루션',
-    hero_h1:'복잡한 명령어 없이. 클릭 몇 번으로<br><em>검증까지 끝내는 안전한 데이터 이관.</em>',
-    hero_sub:'rsync 명령어를 몰라도 됩니다. 서버 연결부터 이관, 검증, 리포트까지 웹 UI 클릭 몇 번으로 끝납니다. <strong>검증이 끝나는 순간 안심하고 전환</strong>할 수 있습니다.',
+    hero_tag:'중계서버 방식 · SSH 불필요 · 무중단 데이터 이관',
+    hero_h1:'SSH 방식의 접속 필요없이.<br><em>중계 게이트웨이를 통한 안전한 데이터 이관.</em>',
+    hero_sub:'SyncDataGuard의 중계 게이트웨이가 소스에서 당기고(pull) 타겟에 밀어줍니다(push) — <strong>서버 간 직접 연결이 필요 없습니다.</strong> 방화벽, 망분리, 보안 제한 환경 모두 지원합니다.',
+    relay_tag:'🔄 중계 게이트웨이 아키텍처',
+    relay_h2:'운영 서버에 아무것도 설치하지 않고<br><span style="color:#0EA5C9">동작하는 유일한 이관 솔루션.</span>',
+    relay_p:'대부분의 이관 도구는 SSH 접근권한, 인증서 공유, 또는 운영서버에 에이전트 설치를 요구합니다. SyncDataGuard의 중계 게이트웨이는 다릅니다 — 소스와 타겟 사이에서 데이터를 중계하므로 서버 간 직접 연결이 불필요합니다.',
+    relay_b1:'운영 서버에 SSH 키나 비밀번호 불필요',
+    relay_b2:'방화벽 통과 — 서버당 포트 1개만 필요',
+    relay_b3:'망분리·보안 제한 환경 지원',
+    relay_b4:'9가지 소스-타겟 조합: SSH, 에이전트, 로컬 — 모든 조합 가능',
+    relay_how:'중계 방식 동작 원리',
+    relay_src:'소스 서버<br><span style="font-size:10px;color:var(--muted);font-weight:400">SSH / 에이전트 / 로컬</span>',
+    relay_gw:'중계 게이트웨이',
+    relay_tgt:'타겟 서버<br><span style="font-size:10px;color:var(--muted);font-weight:400">SSH / 에이전트 / 로컬</span>',
+    relay_note:'소스↔타겟 직접 연결 없음 · 모든 트래픽을 중계서버가 처리',
+    relay_more:'+4가지 더',
     hero_cta1:'무료 체험 시작 →',hero_cta2:'왜 SyncDataGuard?',
     s1:'병렬 스트림',s2:'데이터 정합성',s3:'벤더 제약',
     term_ttl:'SyncData Guard — 실시간 모니터',
     t1:'연결 확인',t2:'스캔 완료',t2v:'8,432,110 파일 · 312 TB',t3:'이관 진행 중... (청크 분할 · 16 병렬)',
     ta:'전체',done:'완료',spd:'속도',eta:'완료까지',etav:'약 4시간 18분',
     why_tag:'왜 SyncData Guard?',why_h2:'이관 중에도<br>서비스는 멈추지 않습니다.',
-    why_desc:'기존 이관 방식은 서비스를 내리고, 옮기고, 다시 올립니다. 그 사이 발생하는 다운타임은 비용이고 리스크입니다. SyncData Guard는 서비스를 운영하면서 점진적으로 데이터를 이관합니다. 검증이 완료된 순간이 전환 시점입니다.',
+    why_desc:'기존 이관 도구는 SSH 접근권한, 인증서 공유, 또는 운영서버에 에이전트 설치를 요구합니다. SyncDataGuard의 중계 게이트웨이는 다릅니다 — 소스와 타겟 사이에서 데이터를 중계하므로 운영서버가 직접 노출되지 않습니다. 서비스는 유지되고, 데이터는 안전하게 이관됩니다.',
     cmp_feature:'기능',cmp_rsync:'단순 rsync',cmp_vendor:'벤더 전용 툴',
     c1:'GUI 모니터링',c2:'벤더 간 이관',c3:'페타급 안정성',c4:'청크 병렬 이관',c5:'예약 자동화',c6:'정합성 리포트',c7:'오프라인 설치',c8:'도입 비용',c8a:'낮음 (인건비↑)',c8b:'억대 이상',c8c:'합리적',c8a2:'△ 제한적',c8b2:'✕',c8c2:'✓',cv1:'△ 제한적',cv3:'△ 자사만',cv5:'△ 별도 구축',cv6:'△ 제한적',cv9:'△ 별도 클라이언트',c9:'웹 UI (브라우저만으로)',c10:'스토리지 분석→안전한 스캔→이관→검증→리포트 까지 단번에 해결',c11:'🤖 SSH 없는 이관 (에이전트 모드)',c11s:'✓ Enterprise 전용',c12:'대역폭 제어 (서비스 영향 최소화)',cv12:'△ 제한적',
     feat_tag:'핵심 기능',feat_h2:'무중단 이관을 위한<br>모든 도구가 여기 있습니다.',feat_desc:'연결 · 분석 · 이관 · 검증 · 전환까지. 서비스 중단 없이 전 과정을 하나의 솔루션으로.',
@@ -1044,8 +1133,9 @@ const D = {
     m2src:'로컬(NAS)',m2ss:'NFS 마운트 ↓',m2tgt:'로컬(NAS)',m2ts:'NFS 마운트 ↓',m2ctrl:'🖥 SyncData Guard (중계·이관)',m2n:'벤더 무관 · rsync 불필요 · HNAS·NetApp',
     m3t:'로컬 ↔ 원격',m3s:'혼합·단일 서버 환경',m3d:'SyncData Guard 서버가 소스·타겟 한쪽을 담당합니다. 파일서버→NAS, NAS→클라우드 등 다양한 시나리오.',
     m3sg:'SyncData Guard 서버',m3ss:'소스 겸 제어',m3tg:'원격 서버·NAS',m3ts:'모든 벤더',m3c:'SSH over rsync · NFS/SMB',m3n:'유연한 구성 · NAS 마운트 지원',
-    m4t:'에이전트 모드 — SSH 불필요',m4s:'자격 증명 노출 없음 · 보안 최우선',m4d:'소스 서버에 경량 에이전트를 설치합니다. rsync 데몬을 통해 이관하므로 SSH 키나 비밀번호 전송이 불필요합니다. 포트 1개만 개방하면 됩니다. 규제 환경, 망 분리 네트워크, RHEL 7 이상 레거시 서버에 최적입니다.',
-    m4src:'소스 서버',m4ss:'🤖 에이전트 (포트 8099)',m4tg:'SyncData Guard',m4ts:'타겟 (로컬)',m4c:'🔒 rsync 데몬 · SSH 없음 · 토큰 인증',m4n:'SSH 키 불필요 · 비밀번호 불필요 · RHEL 7+ · 망분리',
+    m4t:'에이전트 모드 — SSH 불필요',m4s:'자격 증명 노출 없음 · 보안 최우선 · 9가지 조합',m4d:'소스·타겟 양쪽 또는 한쪽에 경량 에이전트를 설치합니다. 에이전트는 rsync 데몬을 통해 SyncDataGuard 중계서버와 통신 — SSH 키, 비밀번호 전송이 불필요합니다. 소스(에이전트) → SyncDataGuard → 타겟(에이전트) 방식으로 이관하며, SSH↔에이전트, 로컬↔에이전트 등 9가지 조합 모두 지원합니다.',
+    m4src:'소스 서버 (에이전트)',m4ss:'🤖 포트 8099',m4tg:'타겟 서버 (에이전트)',m4ts:'🤖 포트 8099',m4c:'🔒 중계 게이트웨이 · SSH 없음 · 토큰 인증 · 9가지 모드',m4n:'SSH 키 불필요 · 비밀번호 불필요 · RHEL 7+ · 망분리 · 에이전트↔에이전트 지원',
+    f8t:'MD5 정밀 검증 — DB 인덱스로 빠르게',f8d:'이관 완료 후 소스와 타겟의 모든 파일 MD5 체크섬을 비교합니다. 내장 DB 인덱스가 이전 실행의 체크섬을 저장하므로 재검증 시 파일을 다시 스캔하지 않아 거의 즉시 완료됩니다. 누락 파일과 불일치 항목은 즉시 리포트로 확인할 수 있습니다.',f8g:'전 플랜 · 인덱스로 즉시 재검증',
     f7t:'에이전트 모드 — SSH 불필요',f7d:'소스 서버에 경량 에이전트를 설치하면 SSH 없이 이관됩니다. SSH 키나 비밀번호 노출 없이 rsync 데몬 방식으로 안전하게 전송합니다. 보안 환경, 망 분리 네트워크에 최적입니다.',f7g:'Enterprise · 자격 증명 노출 없음',
     nas_title:'✅ 검증된 NAS / 서버 호환 목록',na1:'SSH+rsync 직접',na2:'SSH+rsync 직접',na3:'SSH+rsync 직접',na4:'NFS 마운트',na5:'NFS/SMB 마운트',na6:'마운트 이관',
     nas_foot:'rsync를 지원하는 모든 Linux 서버·NAS와 직접 연결 가능 · NFS/SMB 마운트로 나머지 모두 지원',
@@ -1102,16 +1192,29 @@ const D = {
     lp_footer:'By purchasing SyncData Guard, you agree to this license policy.',
     demo_more_folders:'… 44 more folders (48 total)',
     nav_why:'Why SyncDataGuard?',nav_feat:'Features',nav_arch:'Architecture',nav_price:'Pricing',nav_contact:'Contact',nav_report:'Report',nav_cta:'Free trial',
-    hero_tag:'Near-Zero Downtime Server Migration',
-    hero_h1:'No complex commands. A few clicks<br><em>for safe, fully verified data migration.</em>',
+    hero_tag:'Relay-Based · SSH-Free · Near-Zero Downtime Migration',
+    hero_h1:'No SSH access needed.<br><em>Data migrates through a secure relay gateway.</em>',
     hero_sub:'No rsync command line knowledge needed. From server connection to migration, verification, and reports — all done with a few clicks in the web UI. <strong>Cut over with confidence</strong> the moment verification completes.',
+    relay_tag:'🔄 Relay Gateway Architecture',
+    relay_h2:'The only migration tool that works<br><span style="color:#0EA5C9">without touching production servers.</span>',
+    relay_p:'Most tools require SSH access, credential sharing, or agent installation on production servers. SyncDataGuard\'s relay gateway is different — it sits between source and target, pulling and pushing data without any direct server-to-server connection.',
+    relay_b1:'No SSH keys or passwords on production servers',
+    relay_b2:'Works through firewalls — only one port needed per server',
+    relay_b3:'Supports air-gapped and security-restricted environments',
+    relay_b4:'9 source-target combinations: SSH, Agent, or Local — any mix',
+    relay_how:'How relay works',
+    relay_src:'Source Server<br><span style="font-size:10px;color:var(--muted);font-weight:400">SSH / Agent / Local</span>',
+    relay_gw:'Relay Gateway',
+    relay_tgt:'Target Server<br><span style="font-size:10px;color:var(--muted);font-weight:400">SSH / Agent / Local</span>',
+    relay_note:'No direct source↔target connection · Relay handles all traffic',
+    relay_more:'+4 more',
     hero_cta1:'Start free trial →',hero_cta2:'Why SyncDataGuard?',
     s1:'Parallel streams',s2:'Data integrity',s3:'Vendor lock-in',
     term_ttl:'SyncData Guard — Live monitor',
     t1:'Connection verified',t2:'Scan complete',t2v:'8,432,110 files · 312 TB',t3:'Migrating... (chunk split · 16 parallel)',
     ta:'Overall',done:'Done',spd:'Speed',eta:'ETA',etav:'~4h 18m',
     why_tag:'Why SyncData Guard?',why_h2:'Services stay up.<br>Data moves.',
-    why_desc:'Traditional migration means taking services down, moving data, and bringing everything back up. The downtime is costly and risky. SyncData Guard migrates data while services keep running. When verification completes, you cut over. That simple.',
+    why_desc:'Traditional migration tools require SSH access, credential sharing, or agent installation on production servers. SyncDataGuard\'s relay gateway is different — it sits between source and target, pulling and pushing data so production servers are never directly exposed. Services stay up. Data moves safely.',
     cmp_feature:'Feature',cmp_rsync:'Plain rsync',cmp_vendor:'Vendor tool',
     c1:'GUI monitoring',c2:'Cross-vendor migration',c3:'Petabyte stability',c4:'Chunk parallel transfer',c5:'Scheduled automation',c6:'Integrity report',c7:'Offline install',c8:'Cost',c8a:'Low (labor cost↑)',c8b:'$100K+',c8c:'Affordable',cv1:'△ Limited',cv3:'△ Same vendor only',cv5:'△ Manual setup',cv6:'△ Limited',cv9:'△ Separate client',c9:'Web UI (browser only)',c10:'Storage analysis → scan → migrate → verify → report. All in one.',c11:'🤖 No-SSH migration (Agent Mode)',c11s:'✓ Enterprise',c12:'Bandwidth control (zero service impact)',cv12:'△ Limited',
     feat_tag:'Core features',feat_h2:'Every tool you need for<br>near-zero downtime migration.',feat_desc:'From launch to verification — one solution handles it all.',
@@ -1128,8 +1231,9 @@ const D = {
     m2src:'Local(NAS)',m2ss:'NFS mount ↓',m2tgt:'Local(NAS)',m2ts:'NFS mount ↓',m2ctrl:'🖥 SyncData Guard (relay)',m2n:'Vendor-agnostic · No rsync · HNAS · NetApp',
     m3t:'Local ↔ Remote',m3s:'Mixed or single-server',m3d:'SyncData Guard server acts as source or target. File server→NAS, NAS→cloud, or same-server partitions.',
     m3sg:'SyncData Guard server',m3ss:'source & control',m3tg:'Remote server · NAS',m3ts:'any vendor',m3c:'SSH over rsync · NFS/SMB',m3n:'Flexible topology · NAS mount support',
-    m4t:'Agent Mode — No SSH',m4s:'Zero credential exposure · Security-first',m4d:'Install a lightweight agent on the source server. Migration via rsync daemon — no SSH keys, no passwords transmitted. One port only. Ideal for regulated environments, air-gapped networks, and RHEL 7+ legacy servers.',
-    m4src:'Source server',m4ss:'🤖 Agent (port 8099)',m4tg:'SyncData Guard',m4ts:'Target (local)',m4c:'🔒 rsync daemon · No SSH · Token auth',m4n:'No SSH keys · No passwords · RHEL 7+ · Air-gapped',
+    m4t:'Agent Mode — No SSH',m4s:'Zero credential exposure · Security-first · 9 combinations',m4d:'Install a lightweight agent on source, target, or both. Agents communicate with SyncDataGuard\'s relay via rsync daemon — no SSH keys, no passwords. Source (Agent) → SyncDataGuard → Target (Agent). Supports all 9 combinations: Agent↔Agent, SSH↔Agent, Local↔Agent, and more.',
+    m4src:'Source (Agent)',m4ss:'🤖 port 8099',m4tg:'Target (Agent)',m4ts:'🤖 port 8099',m4c:'🔒 Relay gateway · No SSH · Token auth · 9 modes',m4n:'No SSH keys · No passwords · RHEL 7+ · Air-gapped · Agent↔Agent supported',
+    f8t:'MD5 Precision Verification — DB Index Accelerated',f8d:'After migration, every file\'s MD5 checksum is compared between source and target. A built-in DB index stores checksums from previous runs — so re-verification is near-instant, with no re-scanning needed. Missing files and mismatches are reported immediately.',f8g:'All plans · Instant re-verify with index',
     f7t:'Agent Mode — No SSH Required',f7d:'Install a lightweight agent on the source server. SyncData Guard migrates via rsync daemon — no SSH keys, no passwords exposed. Ideal for security-sensitive environments and air-gapped networks.',f7g:'Enterprise · Zero credential exposure',
     nas_title:'✅ Verified NAS / server compatibility',na1:'SSH+rsync direct',na2:'SSH+rsync direct',na3:'SSH+rsync direct',na4:'NFS mount',na5:'NFS/SMB mount',na6:'Mount migration',
     nas_foot:'Any rsync-capable Linux server · NAS connects directly · NFS/SMB mount covers everything else',
@@ -1164,8 +1268,21 @@ const D = {
   ja:{
     nav_why:'なぜSyncDataGuard?',nav_feat:'機能',nav_arch:'アーキテクチャ',nav_price:'料金',nav_contact:'お問い合わせ',nav_report:'レポート',nav_cta:'無料トライアル',
     hero_tag:'サービス無停止に近いサーバー移行ソリューション',
-    hero_h1:'複雑なコマンドは不要。クリック数回で<br><em>検証まで完了する安全なデータ移行。</em>',
+    hero_h1:'SSHアクセス不要。<br><em>セキュアなリレーゲートウェイ経由でデータを移行。</em>',
     hero_sub:'rsyncコマンドの知識は不要です。サーバー接続から移行、検証、レポートまでWeb UIのクリック数回で完了します。<strong>検証が終わった瞬間、安心して切り替え</strong>られます。',
+    relay_tag:'🔄 リレーゲートウェイアーキテクチャ',
+    relay_h2:'本番サーバーに何もインストールせず<br><span style="color:#0EA5C9">動作する唯一の移行ソリューション。</span>',
+    relay_p:'ほとんどのツールはSSHアクセス、認証情報の共有、または本番サーバーへのエージェントインストールを必要とします。SyncDataGuardのリレーゲートウェイは異なります — ソースとターゲットの間でデータを中継するため、サーバー間の直接接続が不要です。',
+    relay_b1:'本番サーバーにSSHキーやパスワード不要',
+    relay_b2:'ファイアウォール通過 — サーバーごとに1ポートのみ必要',
+    relay_b3:'エアギャップ・セキュリティ制限環境をサポート',
+    relay_b4:'9つのソース-ターゲット組み合わせ: SSH、エージェント、ローカル',
+    relay_how:'リレーの仕組み',
+    relay_src:'ソースサーバー<br><span style="font-size:10px;color:var(--muted);font-weight:400">SSH / エージェント / ローカル</span>',
+    relay_gw:'リレーゲートウェイ',
+    relay_tgt:'ターゲットサーバー<br><span style="font-size:10px;color:var(--muted);font-weight:400">SSH / エージェント / ローカル</span>',
+    relay_note:'ソース↔ターゲット直接接続なし · 全トラフィックをリレーが処理',
+    relay_more:'+4つ以上',
     hero_cta1:'無料トライアルを始める →',hero_cta2:'なぜSyncDataGuard?',
     s1:'並列ストリーム',s2:'データ整合性',s3:'ベンダー制約',
     term_ttl:'SyncData Guard — リアルタイムモニター',
@@ -1189,8 +1306,9 @@ const D = {
     m2src:'ローカル(NAS)',m2ss:'NFSマウント ↓',m2tgt:'ローカル(NAS)',m2ts:'NFSマウント ↓',m2ctrl:'🖥 SyncData Guard (中継)',m2n:'ベンダー不問 · rsync不要 · HNAS · NetApp',
     m3t:'ローカル ↔ リモート',m3s:'混合·単一サーバー環境',m3d:'SyncData Guardサーバーがソース·ターゲット一方を担当。ファイルサーバー→NAS、NAS→クラウド等様々なシナリオに対応。',
     m3sg:'SyncData Guardサーバー',m3ss:'ソース兼制御',m3tg:'リモートサーバー·NAS',m3ts:'全ベンダー',m3c:'SSH over rsync · NFS/SMB',m3n:'柔軟な構成 · NASマウント対応',
-    m4t:'エージェントモード — SSH不要',m4s:'認証情報漏洩ゼロ · セキュリティ最優先',m4d:'ソースサーバーに軽量エージェントをインストール。rsyncデーモン経由で移行するため、SSHキーやパスワードの送信が不要です。ポート1つのみ開放すればOK。規制環境・エアギャップネットワーク・RHEL 7+レガシーサーバーに最適。',
-    m4src:'ソースサーバー',m4ss:'🤖 エージェント (ポート 8099)',m4tg:'SyncData Guard',m4ts:'ターゲット (ローカル)',m4c:'🔒 rsyncデーモン · SSH不要 · トークン認証',m4n:'SSHキー不要 · パスワード不要 · RHEL 7+ · エアギャップ',
+    m4t:'エージェントモード — SSH不要',m4s:'認証情報漏洩ゼロ · セキュリティ最優先 · 9つの組み合わせ',m4d:'ソース・ターゲットの片方または両方に軽量エージェントをインストール。エージェントはrsyncデーモンでSyncDataGuardのリレー経由で通信 — SSHキー・パスワード不要。ソース(エージェント) → SyncDataGuard → ターゲット(エージェント)方式で移行。全9組み合わせをサポート。',
+    m4src:'ソース (エージェント)',m4ss:'🤖 ポート 8099',m4tg:'ターゲット (エージェント)',m4ts:'🤖 ポート 8099',m4c:'🔒 リレーゲートウェイ · SSH不要 · トークン認証 · 9モード',m4n:'SSHキー不要 · パスワード不要 · RHEL 7+ · エアギャップ · エージェント↔エージェント対応',
+    f8t:'MD5精密検証 — DBインデックスで高速化',f8d:'移行完了後、ソースとターゲットの全ファイルのMD5チェックサムを比較します。内蔵DBインデックスが過去の実行結果を保存するため、再検証はほぼ即時完了し、再スキャン不要です。欠落ファイルや不一致はすぐにレポートで確認できます。',f8g:'全プラン · インデックスで即時再検証',
     f7t:'エージェントモード — SSH不要',f7d:'ソースサーバーに軽量エージェントをインストールするだけ。SSHキーやパスワード不要でrsyncデーモン経由で安全に移行。セキュリティ環境・エアギャップネットワークに最適。',f7g:'Enterprise · 認証情報漏洩ゼロ',
     nas_title:'✅ 検証済みNAS / サーバー互換リスト',na1:'SSH+rsync直接',na2:'SSH+rsync直接',na3:'SSH+rsync直接',na4:'NFSマウント',na5:'NFS/SMBマウント',na6:'マウント移行',
     nas_foot:'rsync対応の全Linuxサーバー·NASに直接接続 · NFS/SMBマウントで残りすべてに対応',
