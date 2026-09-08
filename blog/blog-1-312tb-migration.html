@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>312TB NAS 데이터를 다운타임 없이 이관한 방법 | SyncData Guard</title>
+<meta name="description" content="312TB, 843만 개 파일을 서비스 중단 없이 옮긴 방법. Relay Gateway 구조, 청크 병렬 전송, 체크섬 무결성 검증까지 — NAS·서버 이관을 다운타임 없이 끝내는 원리를 정리했습니다.">
+<meta name="keywords" content="NAS 마이그레이션, 무중단 서버 이관, 다운타임 없는 데이터 이관, rsync 병렬 전송, relay gateway, SSH 없는 서버 이관, 데이터 무결성 검증">
+<link rel="canonical" href="https://www.syncdataguard.com/blog/312tb-migration.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="312TB NAS 데이터를 다운타임 없이 이관한 방법">
+<meta property="og:description" content="Relay Gateway 구조와 청크 병렬 전송, 체크섬 검증으로 대용량 NAS 이관을 다운타임 없이 끝내는 방법.">
+<meta property="og:url" content="https://www.syncdataguard.com/blog/312tb-migration.html">
+<meta property="og:site_name" content="SyncData Guard">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index, follow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-0:#070b0f;
+    --bg-1:#0b1512;
+    --panel:#0f1b1a;
+    --panel-border:#1c2f2a;
+    --mint:#2ee6a6;
+    --mint-dim:#1f9d75;
+    --cyan:#22d3ee;
+    --text-0:#eaf5f0;
+    --text-1:#a9c4bc;
+    --text-2:#6f8b83;
+    --serif-max:720px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% 0%, rgba(46,230,166,0.08), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 20%, rgba(34,211,238,0.06), transparent 55%),
+      linear-gradient(180deg, var(--bg-0), var(--bg-1) 40%, var(--bg-0));
+    color:var(--text-0);
+    font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{color:var(--mint);}
+
+  /* ---- top nav ---- */
+  header.site{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    max-width:920px;
+    margin:0 auto;
+    padding:28px 24px 0;
+  }
+  .logo{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:19px;
+    letter-spacing:-0.01em;
+    color:var(--text-0);
+    text-decoration:none;
+  }
+  .logo span{color:var(--mint);}
+  .site nav a{
+    color:var(--text-1);
+    text-decoration:none;
+    font-size:14px;
+    margin-left:24px;
+  }
+  .site nav a:hover{color:var(--mint);}
+
+  /* ---- article shell ---- */
+  main{max-width:720px;margin:0 auto;padding:0 24px 100px;}
+
+  .kicker{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    font-size:13px;
+    color:var(--text-2);
+    margin:56px 0 18px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .kicker .dot{width:6px;height:6px;border-radius:50%;background:var(--mint);}
+
+  h1.title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:clamp(30px, 4.2vw, 44px);
+    line-height:1.18;
+    font-weight:700;
+    letter-spacing:-0.015em;
+    color:var(--text-0);
+    margin:0 0 28px;
+  }
+
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--panel-border);
+    border:1px solid var(--panel-border);
+    border-radius:12px;
+    overflow:hidden;
+    margin:0 0 40px;
+  }
+  .stat-row .cell{
+    background:var(--panel);
+    padding:16px 10px;
+    text-align:center;
+  }
+  .stat-row .num{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--mint);
+    display:block;
+  }
+  .stat-row .lbl{
+    font-size:11.5px;
+    color:var(--text-2);
+    margin-top:4px;
+    display:block;
+  }
+
+  figure{margin:36px 0;}
+  figure img{
+    width:100%;
+    display:block;
+    border-radius:14px;
+    border:1px solid var(--panel-border);
+  }
+  figure.hero img{
+    border-radius:16px;
+  }
+  figcaption{
+    font-size:13px;
+    color:var(--text-2);
+    text-align:center;
+    margin-top:12px;
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  article p{
+    font-size:16.5px;
+    color:#d3e6df;
+    margin:0 0 22px;
+  }
+
+  article h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:25px;
+    font-weight:600;
+    color:var(--text-0);
+    margin:56px 0 20px;
+    letter-spacing:-0.01em;
+    padding-top:4px;
+    border-top:1px solid var(--panel-border);
+    padding-top:32px;
+  }
+  article h2:first-of-type{border-top:none;padding-top:0;}
+
+  article ul, article ol{
+    margin:0 0 24px;
+    padding-left:22px;
+    color:#d3e6df;
+  }
+  article li{margin-bottom:10px;font-size:16px;}
+  article li b, article strong{color:var(--text-0);}
+
+  .result-list{
+    list-style:none;
+    padding:0;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:24px 0 32px;
+  }
+  .result-list li{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:10px;
+    padding:12px 16px;
+    font-size:14.5px;
+    color:var(--text-1);
+    display:flex;
+    justify-content:space-between;
+  }
+  .result-list li b{color:var(--mint);font-family:'JetBrains Mono', monospace;}
+
+  blockquote{
+    border-left:3px solid var(--mint);
+    margin:32px 0;
+    padding:4px 0 4px 20px;
+    color:var(--text-1);
+    font-size:15px;
+  }
+
+  .note{
+    font-size:13.5px;
+    color:var(--text-2);
+    border-top:1px solid var(--panel-border);
+    margin-top:56px;
+    padding-top:24px;
+  }
+
+  .cta{
+    margin-top:36px;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:16px;
+    padding:32px;
+    text-align:center;
+  }
+  .cta h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:20px;
+    margin:0 0 10px;
+    color:var(--text-0);
+  }
+  .cta p{color:var(--text-1);font-size:14.5px;margin:0 0 22px;}
+  .cta-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+  .btn{
+    display:inline-block;
+    padding:12px 22px;
+    border-radius:9px;
+    font-size:14.5px;
+    font-weight:600;
+    text-decoration:none;
+  }
+  .btn.primary{background:var(--mint);color:#06231a;}
+  .btn.ghost{border:1px solid var(--panel-border);color:var(--text-0);}
+
+  .author{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:28px;
+    font-size:13.5px;
+    color:var(--text-2);
+  }
+  .author .avatar{
+    width:36px;height:36px;border-radius:50%;
+    background:linear-gradient(135deg, var(--mint), var(--cyan));
+    flex-shrink:0;
+  }
+
+  footer.site{
+    max-width:720px;
+    margin:0 auto;
+    padding:40px 24px 60px;
+    border-top:1px solid var(--panel-border);
+    color:var(--text-2);
+    font-size:13px;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+
+  @media (max-width:600px){
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .result-list{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <a class="logo" href="/">SyncData<span>Guard</span></a>
+  <nav>
+    <a href="/#features">Features</a>
+    <a href="/blog/">Blog</a>
+    <a href="/#download">Free trial</a>
+  </nav>
+</header>
+
+<main>
+  <div class="kicker"><span class="dot"></span>CASE STUDY · NAS MIGRATION</div>
+  <h1 class="title">312TB NAS 데이터를<br>다운타임 없이 이관한 방법</h1>
+
+  <div class="stat-row">
+    <div class="cell"><span class="num">312TB</span><span class="lbl">전체 데이터</span></div>
+    <div class="cell"><span class="num">8,432,110</span><span class="lbl">파일 수</span></div>
+    <div class="cell"><span class="num">1h 2m</span><span class="lbl">최종 컷오버</span></div>
+    <div class="cell"><span class="num">100%</span><span class="lbl">무결성 검증</span></div>
+  </div>
+
+  <figure class="hero">
+    <img src="./images/relay-hero.png" alt="Relay Gateway 구조 — 여러 소스에서 릴레이를 거쳐 검증된 타깃으로 이어지는 흐름도">
+  </figure>
+
+  <article>
+    <p>대용량 NAS를 옮긴다고 하면 보통 "주말 밤샘 작업", "서비스 점검 공지", "혹시 파일 하나라도 유실되면 어쩌나" 하는 걱정부터 떠오릅니다. 하지만 위 숫자는 실제로 가능한 수치입니다. 이 글에서는 이 정도 규모의 이관을 서비스 중단 없이 끝낼 수 있는 구조를 하나씩 뜯어봅니다.</p>
+
+    <h2>왜 대용량 NAS 이관은 늘 두려운 작업일까</h2>
+    <p>서버·NAS 이관을 앞두면 실무자들이 마주치는 문제는 대체로 비슷합니다.</p>
+    <ul>
+      <li><b>다운타임</b> — 데이터를 다 옮길 때까지 서비스를 내려야 한다는 부담</li>
+      <li><b>SSH 키·자격증명 노출</b> — 이관을 위해 프로덕션 서버에 새 접근 권한을 열어줘야 하는 위험</li>
+      <li><b>속도</b> — rsync를 그냥 돌리면 단일 스레드라 수십, 수백 TB급에서는 며칠씩 걸림</li>
+      <li><b>검증 부재</b> — "다 옮겼다"는 말을 무엇으로 확신할 것인가</li>
+    </ul>
+    <p>이 중 하나라도 제대로 안 풀리면, 이관 작업 자체가 위험한 이벤트가 되어버립니다.</p>
+
+    <h2>핵심은 "직접 연결하지 않는다"는 발상의 전환</h2>
+    <p>대부분의 이관 방식은 소스 서버와 타깃 서버를 직접 연결합니다. SSH로 붙거나, 전용 에이전트를 양쪽에 설치하거나, 벤더 복제 솔루션을 씁니다. 문제는 이 방식이 프로덕션 서버에 직접적인 접점을 만든다는 점입니다.</p>
+    <p>Relay Gateway 방식은 이 접점 자체를 없앱니다. 소스와 타깃 서버가 서로를 몰라도 됩니다. 중간의 릴레이 게이트웨이가 소스에서 데이터를 <b>끌어오고(pull)</b>, 타깃으로 <b>밀어넣습니다(push)</b>. 서버 대 서버 직접 연결이 아예 존재하지 않는 구조입니다.</p>
+    <ul>
+      <li><b>방화벽 친화적</b> — 서버당 포트 하나만 열면 되고, 소스-타깃 간 별도 규칙이 필요 없음</li>
+      <li><b>에어갭·보안 폐쇄망에서도 작동</b> — 직접 연결이 없으니 보안이 엄격한 환경에서도 구성 가능</li>
+      <li><b>자격증명 최소화</b> — Agent 모드를 쓰면 SSH 키·패스워드를 프로덕션 서버에 전혀 두지 않아도 됨</li>
+    </ul>
+
+    <h2>속도는 어떻게 확보하나 — 청크 병렬 전송</h2>
+    <p>312TB를 1시간 남짓에 옮긴 비결은 두 가지 원리의 조합입니다.</p>
+
+    <figure>
+      <img src="./images/chunk-parallel.png" alt="청크 분할 · 16× 병렬 스트림 전송 구조도">
+    </figure>
+
+    <p><b>첫째, 폴더 단위 청크 분할.</b> 대용량 데이터를 하나의 스트림으로 옮기면 아무리 대역폭이 넉넉해도 병목이 생깁니다. 폴더 구조를 여러 청크로 쪼개서 최대 16개 스트림으로 동시에 전송하면, 이론상 대역폭을 거의 그대로 활용할 수 있습니다.</p>
+    <p><b>둘째, 히스토리 기반 델타 전송.</b> 처음부터 전체를 한 번에 옮기는 게 아니라, 사전 스캔과 예비 전송을 여러 차례 거치며 변경분(델타)만 좁혀갑니다. 최종 컷오버 시점에는 실제로 옮겨야 할 변경분만 남기 때문에, 마지막 전환 작업은 짧게 끝납니다. 즉 "1시간 2분"은 312TB를 처음부터 다 옮긴 시간이 아니라, 사전 동기화를 마친 뒤 마지막 델타만 정리한 시간입니다.</p>
+    <p>여기에 대역폭 제어를 더하면, 이관 작업이 운영 트래픽을 잡아먹지 않도록 상한선을 걸 수 있습니다. 업무 시간에도 서비스 영향 없이 백그라운드로 동기화를 진행할 수 있는 이유입니다.</p>
+    <p>진행 상황은 폴더 단위로 실시간 모니터링됩니다. 전체 진행률뿐 아니라 개별 폴더가 몇 개의 청크로 쪼개져 어느 시점까지 처리됐는지 실시간으로 확인할 수 있어서, 지금 어디까지 됐는지 알기 위해 로그를 뒤질 필요가 없습니다.</p>
+
+    <figure>
+      <img src="./images/progress-screenshot.png" alt="실시간 이관 진행률 대시보드 화면">
+      <figcaption>실시간 이관 진행률 — 폴더별 상태를 한눈에 확인</figcaption>
+    </figure>
+
+    <h2>"다 옮겼다"를 어떻게 증명하나</h2>
+    <p>이관에서 가장 위험한 순간은 마지막 컷오버 결정입니다. "옮겼으니 이제 트래픽을 새 서버로 돌리자"는 판단을 무엇을 근거로 내릴 것인가. 마이그레이션이 끝나는 즉시 소스와 타깃의 모든 파일에 대해 체크섬(MD5) 비교가 자동으로 실행됩니다.</p>
+
+    <ul class="result-list">
+      <li>완료 폴더 <b>48 / 48</b></li>
+      <li>실패 <b>0건</b></li>
+      <li>파일 누락 <b>0건</b></li>
+      <li>체크섬 불일치 <b>0건</b></li>
+    </ul>
+
+    <figure>
+      <img src="./images/report-screenshot.png" alt="이관 완료 리포트 — 폴더별 상태, 소요 시간, 완료 시각까지 자동 기록">
+    </figure>
+
+    <p>이 결과가 곧 <b>컷오버 여부를 결정하는 근거</b>가 됩니다. "느낌상 다 옮긴 것 같다"가 아니라, 검증된 숫자를 보고 전환 버튼을 누르는 것과 감으로 누르는 것은 완전히 다른 이야기입니다. 이 리포트는 단일 HTML 파일로 자동 생성되기 때문에, 별도 문서 작업 없이 그대로 내부 보고나 감사 자료로 제출할 수 있습니다.</p>
+
+    <h2>재검증도 처음부터 다시 하지 않는다</h2>
+    <p>마이그레이션 후 "혹시 몰라서 한 번 더 확인해보자"는 요청은 흔한데, 843만 개 파일을 처음부터 다시 스캔하면 그것만으로도 상당한 시간이 걸립니다. 이전 실행에서 계산한 체크섬을 인덱스로 저장해두면, 재검증 시에는 변경된 부분만 다시 계산하면 되기 때문에 거의 즉시 결과를 받을 수 있습니다. 정기 동기화·DR replication처럼 반복적으로 이관·검증을 진행해야 하는 환경에서는 이 차이가 누적되며 체감이 커집니다.</p>
+
+    <h2>정리</h2>
+    <p>312TB, 843만 개 파일, 1시간 2분, 무결성 100% — 이 숫자가 가능했던 이유를 정리하면 다음과 같습니다.</p>
+    <ol>
+      <li><b>Relay Gateway 구조</b>로 소스-타깃 직접 연결 없이, 방화벽·보안 환경에 상관없이 이관</li>
+      <li><b>청크 병렬 전송 + 히스토리 기반 델타 동기화</b>로 최종 컷오버 시간을 최소화</li>
+      <li><b>체크섬 자동 검증</b>으로 "다 옮겼다"를 감이 아니라 숫자로 증명</li>
+      <li><b>인덱스 기반 재검증</b>으로 반복 확인 작업의 부담을 줄임</li>
+    </ol>
+    <p>대용량 이관이 두려운 이유는 대체로 확신할 수 없어서입니다. 속도와 검증, 두 가지가 같이 해결되면 이관은 더 이상 밤샘 이벤트가 아니라 예측 가능한 작업이 됩니다.</p>
+
+    <p class="note">이 글의 수치는 실제 마이그레이션 환경을 기반으로 한 예시 시나리오입니다. 환경에 따라 실제 소요 시간과 처리량은 달라질 수 있습니다.</p>
+
+    <div class="author">
+      <div class="avatar"></div>
+      <div>SyncData Guard by CloudFactory — 18년 클라우드 인프라·데이터 이관 경험을 바탕으로 만든 릴레이 기반 서버 데이터 이관 솔루션</div>
+    </div>
+
+    <div class="cta">
+      <h3>직접 확인해보고 싶다면?</h3>
+      <p>신용카드 없이 7일 무료로 체험해보세요.</p>
+      <div class="cta-buttons">
+        <a class="btn primary" href="/#download">무료 체험 시작하기</a>
+        <a class="btn ghost" href="/#report">리포트 예시 보기</a>
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer class="site">
+  <span>© 2026 CloudFactory. All rights reserved.</span>
+  <span>support@syncdataguard.com</span>
+</footer>
+
+</body>
+</html>
